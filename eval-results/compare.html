@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Side-by-side report comparison</title>
+  <style>
+    :root {
+      --ink: #1b1b1b;
+      --bg: #f7f4ef;
+      --card: #fffdf8;
+      --line: #c9beae;
+      --accent: #ebe4d8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Georgia, "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+    header {
+      position: sticky; top: 0; z-index: 5;
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+      padding: 0.85rem 1.1rem 1rem;
+    }
+    h1 { margin: 0 0 0.35rem; font-size: 1.35rem; }
+    .nav { margin-bottom: 0.75rem; }
+    .nav a {
+      color: var(--ink); text-decoration: none;
+      border: 1px solid var(--line); background: var(--card);
+      padding: 0.35rem 0.7rem; border-radius: 8px;
+      font-family: "Avenir Next", "Segoe UI", sans-serif; font-size: 0.92rem;
+    }
+    .nav a:hover { background: var(--accent); }
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem 1rem;
+    }
+    .pane-controls {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 0.65rem 0.8rem;
+    }
+    .pane-controls h2 {
+      margin: 0 0 0.45rem;
+      font-size: 0.95rem;
+      font-family: "Avenir Next", "Segoe UI", sans-serif;
+      font-weight: 700;
+    }
+    .row { display: flex; flex-wrap: wrap; gap: 0.45rem 0.7rem; align-items: end; }
+    label { display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.82rem; color: #555; }
+    select {
+      min-width: 11rem; max-width: 100%;
+      padding: 0.4rem 0.5rem; border-radius: 8px; border: 1px solid var(--line);
+      background: white; color: var(--ink); font: inherit;
+    }
+    .toolbar {
+      display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center;
+      margin-top: 0.75rem;
+    }
+    button.action {
+      font: inherit; cursor: pointer;
+      padding: 0.4rem 0.75rem; border-radius: 8px;
+      border: 1px solid var(--line); background: var(--accent); color: var(--ink);
+    }
+    button.action:hover { background: #e0d5c3; }
+    .hint { color: #666; font-size: 0.88rem; margin: 0.55rem 0 0; }
+    .status { color: #8a4b00; font-size: 0.88rem; margin: 0.4rem 0 0; min-height: 1.2em; }
+    .frames {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      height: calc(100vh - var(--header-h, 210px));
+      border-top: 1px solid var(--line);
+    }
+    .frame-wrap {
+      display: flex; flex-direction: column; min-width: 0;
+      border-right: 1px solid var(--line);
+    }
+    .frame-wrap:last-child { border-right: none; }
+    .frame-label {
+      padding: 0.4rem 0.75rem; background: var(--accent);
+      font-family: "Avenir Next", "Segoe UI", sans-serif; font-size: 0.85rem;
+      border-bottom: 1px solid var(--line); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    iframe { border: 0; width: 100%; flex: 1; background: white; }
+    @media (max-width: 900px) {
+      .controls, .frames { grid-template-columns: 1fr; }
+      .frames { height: auto; }
+      .frame-wrap { height: 70vh; border-right: none; border-bottom: 1px solid var(--line); }
+    }
+  </style>
+</head>
+<body>
+  <header id="header">
+    <div class="nav"><a href="index.html">← Back to comparison</a></div>
+    <h1>Side-by-side report comparison</h1>
+    <div class="controls">
+      <div class="pane-controls">
+        <h2>Left report</h2>
+        <div class="row">
+          <label>Sample
+            <select id="leftDataset"></select>
+          </label>
+          <label>Experiment
+            <select id="leftRun"></select>
+          </label>
+          <label>Model
+            <select id="leftModel"></select>
+          </label>
+        </div>
+      </div>
+      <div class="pane-controls">
+        <h2>Right report</h2>
+        <div class="row">
+          <label>Sample
+            <select id="rightDataset"></select>
+          </label>
+          <label>Experiment
+            <select id="rightRun"></select>
+          </label>
+          <label>Model
+            <select id="rightModel"></select>
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="toolbar">
+      <button type="button" class="action" id="swapBtn">Swap left / right</button>
+    </div>
+    <p class="hint">Pick any two scored reports to compare side by side.</p>
+    <p class="status" id="status"></p>
+  </header>
+
+  <div class="frames" id="frames">
+    <div class="frame-wrap">
+      <div class="frame-label" id="leftLabel">Left</div>
+      <iframe id="leftFrame" title="Left report"></iframe>
+    </div>
+    <div class="frame-wrap">
+      <div class="frame-label" id="rightLabel">Right</div>
+      <iframe id="rightFrame" title="Right report"></iframe>
+    </div>
+  </div>
+
+  <script type="application/json" id="runs-data">
+{"activeDatasetId": "synthetic-pi", "activeRunId": "gliner-0.4-opennlp-0.2", "datasets": [{"id": "synthetic-pi", "label": "Sample 1 — Synthetic PI test", "notes": "Labeled synthetic name dataset (1,260 comments).", "runs": [{"id": "original", "label": "GLiNER 0.5 / OpenNLP 0 / XLM 0 / spaCy 0", "notes": "GLiNER 0.5; OpenNLP, XLM-RoBERTa, spaCy: no threshold.", "thresholds": {"gliner": "0.5", "opennlp": "none", "xlm-roberta-ner": "none", "spacy-xx": "none"}, "results": {"gliner": "2026-11-02_122358", "opennlp": "2026-11-02_122402", "xlm-roberta-ner": "2026-11-02_122407", "spacy-xx": "2026-11-02_122412"}}, {"id": "threshold-0.7", "label": "GLiNER 0.7 / OpenNLP 0.7 / XLM 0.7", "notes": "GLiNER 0.7; OpenNLP 0.7; XLM-RoBERTa 0.7.", "thresholds": {"gliner": "0.7", "opennlp": "0.7", "xlm-roberta-ner": "0.7"}, "results": {"gliner": "2026-11-02_124009", "opennlp": "2026-11-02_124013", "xlm-roberta-ner": "2026-11-02_124019"}}, {"id": "gliner-0.6-opennlp-0.5", "label": "GLiNER 0.6 / OpenNLP 0.5 / XLM 0.6", "notes": "GLiNER 0.6; OpenNLP 0.5; XLM-RoBERTa 0.6.", "thresholds": {"gliner": "0.6", "opennlp": "0.5", "xlm-roberta-ner": "0.6"}, "results": {"gliner": "2026-11-02_124023", "opennlp": "2026-11-02_124027", "xlm-roberta-ner": "2026-11-02_124032"}}, {"id": "gliner-0.55-opennlp-0.3", "label": "GLiNER 0.55 / OpenNLP 0.3 / XLM 0.55", "notes": "GLiNER 0.55; OpenNLP 0.3; XLM-RoBERTa 0.55.", "thresholds": {"gliner": "0.55", "opennlp": "0.3", "xlm-roberta-ner": "0.55"}, "results": {"gliner": "2026-11-02_124037", "opennlp": "2026-11-02_124041", "xlm-roberta-ner": "2026-11-02_124047"}}, {"id": "gliner-0.4-opennlp-0.2", "label": "GLiNER 0.4 / OpenNLP 0.2 / XLM 0.4", "notes": "GLiNER 0.4; OpenNLP 0.2; XLM-RoBERTa 0.4.", "thresholds": {"gliner": "0.4", "opennlp": "0.2", "xlm-roberta-ner": "0.4"}, "results": {"gliner": "2026-11-02_124051", "opennlp": "2026-11-02_124055", "xlm-roberta-ner": "2026-11-02_124100"}}]}, {"id": "feedback-2026-10-29", "label": "Sample 2 — feedback", "notes": "Feedback sample (3,319 comments).", "runs": [{"id": "original", "label": "GLiNER 0.5 / OpenNLP 0 / XLM 0 / spaCy 0", "notes": "GLiNER 0.5; OpenNLP none; XLM-RoBERTa/spaCy no threshold.", "thresholds": {"gliner": "0.5", "opennlp": "none", "xlm-roberta-ner": "none", "spacy-xx": "none"}, "results": {"gliner": "2026-10-30_152614", "opennlp": "2026-10-30_152618", "xlm-roberta-ner": "2026-10-30_152624", "spacy-xx": "2026-10-30_152628"}}, {"id": "threshold-0.7", "label": "GLiNER 0.7 / OpenNLP 0.7 / XLM 0.7", "notes": "GLiNER 0.7; OpenNLP 0.7; XLM-RoBERTa 0.7.", "thresholds": {"gliner": "0.7", "opennlp": "0.7", "xlm-roberta-ner": "0.7"}, "results": {"gliner": "2026-10-30_152633", "opennlp": "2026-10-30_152637", "xlm-roberta-ner": "2026-11-02_115152"}}, {"id": "gliner-0.6-opennlp-0.5", "label": "GLiNER 0.6 / OpenNLP 0.5 / XLM 0.6", "notes": "GLiNER 0.6; OpenNLP 0.5; XLM-RoBERTa 0.6.", "thresholds": {"gliner": "0.6", "opennlp": "0.5", "xlm-roberta-ner": "0.6"}, "results": {"gliner": "2026-10-30_152643", "opennlp": "2026-10-30_152647", "xlm-roberta-ner": "2026-11-02_115157"}}, {"id": "gliner-0.55-opennlp-0.3", "label": "GLiNER 0.55 / OpenNLP 0.3 / XLM 0.55", "notes": "GLiNER 0.55; OpenNLP 0.3; XLM-RoBERTa 0.55.", "thresholds": {"gliner": "0.55", "opennlp": "0.3", "xlm-roberta-ner": "0.55"}, "results": {"gliner": "2026-10-30_152652", "opennlp": "2026-10-30_143532", "xlm-roberta-ner": "2026-11-02_115201"}}, {"id": "gliner-0.4-opennlp-0.2", "label": "GLiNER 0.4 / OpenNLP 0.2 / XLM 0.4", "notes": "GLiNER 0.4; OpenNLP 0.2; XLM-RoBERTa 0.4.", "thresholds": {"gliner": "0.4", "opennlp": "0.2", "xlm-roberta-ner": "0.4"}, "results": {"gliner": "2026-10-30_144034", "opennlp": "2026-10-30_144040", "xlm-roberta-ner": "2026-11-02_115205"}}, {"id": "gliner-0.9-opennlp-0.1", "label": "GLiNER 0.9 / OpenNLP 0.1 / XLM 0.9", "notes": "GLiNER 0.9; OpenNLP 0.1; XLM-RoBERTa 0.9.", "thresholds": {"gliner": "0.9", "opennlp": "0.1", "xlm-roberta-ner": "0.9"}, "results": {"gliner": "2026-10-30_155249", "opennlp": "2026-10-30_155254", "xlm-roberta-ner": "2026-11-02_115210"}}, {"id": "gliner-0.95-opennlp-0", "label": "GLiNER 0.95 / OpenNLP 0 / XLM 0.95", "notes": "GLiNER 0.95; OpenNLP 0; XLM-RoBERTa 0.95.", "thresholds": {"gliner": "0.95", "opennlp": "0", "xlm-roberta-ner": "0.95"}, "results": {"gliner": "2026-11-02_101753", "opennlp": "2026-11-02_101758", "xlm-roberta-ner": "2026-11-02_115214"}}, {"id": "gliner-0.975-opennlp-0", "label": "GLiNER 0.975 / OpenNLP 0 / XLM 0.975", "notes": "GLiNER 0.975; OpenNLP 0; XLM-RoBERTa 0.975.", "thresholds": {"gliner": "0.975", "opennlp": "0", "xlm-roberta-ner": "0.975"}, "results": {"gliner": "2026-11-02_103534", "opennlp": "2026-11-02_103538", "xlm-roberta-ner": "2026-11-02_115219"}}]}]}
+  </script>
+  <script>
+    const RUNS = JSON.parse(document.getElementById('runs-data').textContent);
+
+    const leftDataset = document.getElementById('leftDataset');
+    const leftRun = document.getElementById('leftRun');
+    const leftModel = document.getElementById('leftModel');
+    const rightDataset = document.getElementById('rightDataset');
+    const rightRun = document.getElementById('rightRun');
+    const rightModel = document.getElementById('rightModel');
+    const leftFrame = document.getElementById('leftFrame');
+    const rightFrame = document.getElementById('rightFrame');
+    const leftLabel = document.getElementById('leftLabel');
+    const rightLabel = document.getElementById('rightLabel');
+    const statusEl = document.getElementById('status');
+    const header = document.getElementById('header');
+
+    function datasets() { return RUNS.datasets || []; }
+    function findDataset(id) { return datasets().find(d => d.id === id); }
+    function findRun(dataset, runId) {
+      return ((dataset && dataset.runs) || []).find(r => r.id === runId);
+    }
+    function modelOptions(run) {
+      const results = (run && run.results) || {};
+      return Object.keys(results).sort().map(model => ({
+        model,
+        ts: results[model],
+        threshold: ((run.thresholds || {})[model]) || '—',
+        path: model + '/' + results[model] + '/report.html'
+      }));
+    }
+    function fillSelect(select, items, valueKey, labelFn, selected) {
+      select.innerHTML = '';
+      items.forEach(item => {
+        const opt = document.createElement('option');
+        opt.value = item[valueKey];
+        opt.textContent = labelFn(item);
+        select.appendChild(opt);
+      });
+      if (selected && [...select.options].some(o => o.value === selected)) {
+        select.value = selected;
+      }
+    }
+    function reportPath(side) {
+      const ds = findDataset(side.dataset.value);
+      const run = findRun(ds, side.run.value);
+      const models = modelOptions(run);
+      const hit = models.find(m => m.model === side.model.value);
+      return hit ? hit.path : '';
+    }
+    function reportMeta(side) {
+      const ds = findDataset(side.dataset.value);
+      const run = findRun(ds, side.run.value);
+      const models = modelOptions(run);
+      const hit = models.find(m => m.model === side.model.value);
+      if (!hit) return '';
+      return (ds.label || ds.id) + ' · ' + (run.label || run.id) + ' · ' + hit.model + ' (thr ' + hit.threshold + ')';
+    }
+    function refreshRunModel(side, keepRun, keepModel) {
+      const ds = findDataset(side.dataset.value);
+      const runs = (ds && ds.runs) || [];
+      fillSelect(side.run, runs, 'id', r => r.label || r.id, keepRun);
+      const run = findRun(ds, side.run.value);
+      const models = modelOptions(run);
+      fillSelect(side.model, models, 'model', m => m.model, keepModel);
+    }
+    function populateDatasets(selectedLeft, selectedRight) {
+      fillSelect(leftDataset, datasets(), 'id', d => d.label || d.id, selectedLeft);
+      fillSelect(rightDataset, datasets(), 'id', d => d.label || d.id, selectedRight);
+    }
+    function parseQuery() {
+      const q = new URLSearchParams(location.search);
+      return { a: q.get('a') || '', b: q.get('b') || '' };
+    }
+    function pathToSelection(path) {
+      const parts = (path || '').split('/').filter(Boolean);
+      if (parts.length < 3) return null;
+      const model = parts[0];
+      const ts = parts[1];
+      for (const ds of datasets()) {
+        for (const run of (ds.runs || [])) {
+          if ((run.results || {})[model] === ts) {
+            return { datasetId: ds.id, runId: run.id, model };
+          }
+        }
+      }
+      return null;
+    }
+    function updateUrl() {
+      const a = reportPath({ dataset: leftDataset, run: leftRun, model: leftModel });
+      const b = reportPath({ dataset: rightDataset, run: rightRun, model: rightModel });
+      const url = new URL(location.href);
+      if (a) url.searchParams.set('a', a); else url.searchParams.delete('a');
+      if (b) url.searchParams.set('b', b); else url.searchParams.delete('b');
+      history.replaceState(null, '', url);
+    }
+    function setStatus(msg) { statusEl.textContent = msg || ''; }
+    function measureHeader() {
+      document.documentElement.style.setProperty('--header-h', header.offsetHeight + 'px');
+    }
+
+    function loadFrames() {
+      const a = reportPath({ dataset: leftDataset, run: leftRun, model: leftModel });
+      const b = reportPath({ dataset: rightDataset, run: rightRun, model: rightModel });
+      leftLabel.textContent = reportMeta({ dataset: leftDataset, run: leftRun, model: leftModel }) || 'Left';
+      rightLabel.textContent = reportMeta({ dataset: rightDataset, run: rightRun, model: rightModel }) || 'Right';
+      if (a) leftFrame.src = a;
+      if (b) rightFrame.src = b;
+      updateUrl();
+      setStatus('');
+      measureHeader();
+    }
+
+    const q = parseQuery();
+    const selA = pathToSelection(q.a);
+    const selB = pathToSelection(q.b);
+    const defaultDs = (datasets()[0] && datasets()[0].id) || '';
+    populateDatasets(selA ? selA.datasetId : defaultDs, selB ? selB.datasetId : defaultDs);
+    refreshRunModel({ dataset: leftDataset, run: leftRun, model: leftModel }, selA && selA.runId, selA && selA.model);
+    refreshRunModel({ dataset: rightDataset, run: rightRun, model: rightModel }, selB && selB.runId, selB && selB.model);
+
+    if (selA && !selB) {
+      const ds = findDataset(leftDataset.value);
+      const run = findRun(ds, leftRun.value);
+      const models = modelOptions(run);
+      const other = models.find(m => m.model !== leftModel.value) || models[0];
+      if (other) rightModel.value = other.model;
+    }
+
+    leftDataset.addEventListener('change', function () {
+      refreshRunModel({ dataset: leftDataset, run: leftRun, model: leftModel });
+      loadFrames();
+    });
+    rightDataset.addEventListener('change', function () {
+      refreshRunModel({ dataset: rightDataset, run: rightRun, model: rightModel });
+      loadFrames();
+    });
+    leftRun.addEventListener('change', function () {
+      refreshRunModel({ dataset: leftDataset, run: leftRun, model: leftModel }, leftRun.value);
+      loadFrames();
+    });
+    rightRun.addEventListener('change', function () {
+      refreshRunModel({ dataset: rightDataset, run: rightRun, model: rightModel }, rightRun.value);
+      loadFrames();
+    });
+    leftModel.addEventListener('change', loadFrames);
+    rightModel.addEventListener('change', loadFrames);
+    document.getElementById('swapBtn').addEventListener('click', function () {
+      const snap = { d: leftDataset.value, r: leftRun.value, m: leftModel.value };
+      leftDataset.value = rightDataset.value;
+      refreshRunModel({ dataset: leftDataset, run: leftRun, model: leftModel }, rightRun.value, rightModel.value);
+      rightDataset.value = snap.d;
+      refreshRunModel({ dataset: rightDataset, run: rightRun, model: rightModel }, snap.r, snap.m);
+      loadFrames();
+    });
+    window.addEventListener('resize', measureHeader);
+
+    measureHeader();
+    loadFrames();
+  </script>
+</body>
+</html>

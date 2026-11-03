@@ -7,7 +7,7 @@
     "notes" : "Labeled synthetic name dataset (1,260 comments).",
     "runs" : [ {
       "id" : "original",
-      "label" : "Original run",
+      "label" : "GLiNER 0.5 / OpenNLP 0 / XLM 0 / spaCy 0",
       "notes" : "GLiNER 0.5; OpenNLP, XLM-RoBERTa, spaCy: no threshold.",
       "thresholds" : {
         "gliner" : "0.5",
@@ -84,7 +84,7 @@
     "notes" : "Feedback sample (3,319 comments).",
     "runs" : [ {
       "id" : "original",
-      "label" : "Original run",
+      "label" : "GLiNER 0.5 / OpenNLP 0 / XLM 0 / spaCy 0",
       "notes" : "GLiNER 0.5; OpenNLP none; XLM-RoBERTa/spaCy no threshold.",
       "thresholds" : {
         "gliner" : "0.5",

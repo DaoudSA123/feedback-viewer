@@ -28,10 +28,19 @@
     .thresholds { margin: 0.75rem 0 1rem; padding: 0; list-style: none; }
     .thresholds li { margin: 0.2rem 0; }
     .muted { color: #666; }
+    .nav { margin: 0.75rem 0 0; }
+    .nav a {
+      color: #1b1b1b; text-decoration: none; border: 1px solid #c9beae; background: #fffdf8;
+      padding: 0.4rem 0.75rem; border-radius: 8px; font-family: "Avenir Next", "Segoe UI", sans-serif;
+      font-size: 0.95rem;
+    }
+    .nav a:hover { background: #ebe4d8; }
+    .report-links a + a { margin-left: 0.65rem; }
   </style>
 </head>
 <body>
   <h1>Name redaction model comparison</h1>
+  <p class="nav"><a href="compare.html">Side-by-side compare</a></p>
   <div class="dataset-tabs" role="tablist" aria-label="Data samples">
 <button type="button" class="dataset-tab active" data-dataset="synthetic-pi" role="tab" aria-selected="true">Sample 1 — Synthetic PI test</button>
 <button type="button" class="dataset-tab" data-dataset="feedback-2026-10-29" role="tab" aria-selected="false">Sample 2 — feedback</button>
@@ -39,7 +48,7 @@
 <section class="dataset-panel active" data-dataset-panel="synthetic-pi">
 <p class="note">Labeled synthetic name dataset (1,260 comments).</p>
 <div class="tabs" role="tablist">
-<button type="button" class="tab" data-tab="synthetic-pi::original" data-dataset="synthetic-pi" role="tab" aria-selected="false">Original run</button>
+<button type="button" class="tab" data-tab="synthetic-pi::original" data-dataset="synthetic-pi" role="tab" aria-selected="false">GLiNER 0.5 / OpenNLP 0 / XLM 0 / spaCy 0</button>
 <button type="button" class="tab" data-tab="synthetic-pi::threshold-0.7" data-dataset="synthetic-pi" role="tab" aria-selected="false">GLiNER 0.7 / OpenNLP 0.7 / XLM 0.7</button>
 <button type="button" class="tab" data-tab="synthetic-pi::gliner-0.6-opennlp-0.5" data-dataset="synthetic-pi" role="tab" aria-selected="false">GLiNER 0.6 / OpenNLP 0.5 / XLM 0.6</button>
 <button type="button" class="tab" data-tab="synthetic-pi::gliner-0.55-opennlp-0.3" data-dataset="synthetic-pi" role="tab" aria-selected="false">GLiNER 0.55 / OpenNLP 0.3 / XLM 0.55</button>
@@ -65,10 +74,10 @@
             </tr>
           </thead>
           <tbody>
-<tr><td>gliner</td><td>0.5</td><td>0.946156</td><td>0.950028</td><td>0.947549</td><td><a href="gliner/2026-11-02_122358/report.html">Open report</a></td></tr>
-<tr><td>opennlp</td><td>none</td><td>0.271667</td><td>0.230599</td><td>0.257009</td><td><a href="opennlp/2026-11-02_122402/report.html">Open report</a></td></tr>
-<tr><td>spacy-xx</td><td>none</td><td>0.694151</td><td>0.691661</td><td>0.693522</td><td><a href="spacy-xx/2026-11-02_122412/report.html">Open report</a></td></tr>
-<tr><td>xlm-roberta-ner</td><td>none</td><td>0.775869</td><td>0.758866</td><td>0.769885</td><td><a href="xlm-roberta-ner/2026-11-02_122407/report.html">Open report</a></td></tr>
+<tr><td>gliner</td><td>0.5</td><td>0.946156</td><td>0.950028</td><td>0.947549</td><td class="report-links"><a href="gliner/2026-11-02_122358/report.html">Open report</a><a href="compare.html?a=gliner/2026-11-02_122358/report.html">Compare</a></td></tr>
+<tr><td>opennlp</td><td>none</td><td>0.271667</td><td>0.230599</td><td>0.257009</td><td class="report-links"><a href="opennlp/2026-11-02_122402/report.html">Open report</a><a href="compare.html?a=opennlp/2026-11-02_122402/report.html">Compare</a></td></tr>
+<tr><td>spacy-xx</td><td>none</td><td>0.694151</td><td>0.691661</td><td>0.693522</td><td class="report-links"><a href="spacy-xx/2026-11-02_122412/report.html">Open report</a><a href="compare.html?a=spacy-xx/2026-11-02_122412/report.html">Compare</a></td></tr>
+<tr><td>xlm-roberta-ner</td><td>none</td><td>0.775869</td><td>0.758866</td><td>0.769885</td><td class="report-links"><a href="xlm-roberta-ner/2026-11-02_122407/report.html">Open report</a><a href="compare.html?a=xlm-roberta-ner/2026-11-02_122407/report.html">Compare</a></td></tr>
   </tbody>
 </table>
 </section>
@@ -91,9 +100,9 @@
             </tr>
           </thead>
           <tbody>
-<tr><td>gliner</td><td>0.7</td><td>0.919905</td><td>0.923261</td><td>0.921114</td><td><a href="gliner/2026-11-02_124009/report.html">Open report</a></td></tr>
-<tr><td>opennlp</td><td>0.7</td><td>0.248372</td><td>0.207717</td><td>0.233871</td><td><a href="opennlp/2026-11-02_124013/report.html">Open report</a></td></tr>
-<tr><td>xlm-roberta-ner</td><td>0.7</td><td>0.764338</td><td>0.744725</td><td>0.757419</td><td><a href="xlm-roberta-ner/2026-11-02_124019/report.html">Open report</a></td></tr>
+<tr><td>gliner</td><td>0.7</td><td>0.919905</td><td>0.923261</td><td>0.921114</td><td class="report-links"><a href="gliner/2026-11-02_124009/report.html">Open report</a><a href="compare.html?a=gliner/2026-11-02_124009/report.html">Compare</a></td></tr>
+<tr><td>opennlp</td><td>0.7</td><td>0.248372</td><td>0.207717</td><td>0.233871</td><td class="report-links"><a href="opennlp/2026-11-02_124013/report.html">Open report</a><a href="compare.html?a=opennlp/2026-11-02_124013/report.html">Compare</a></td></tr>
+<tr><td>xlm-roberta-ner</td><td>0.7</td><td>0.764338</td><td>0.744725</td><td>0.757419</td><td class="report-links"><a href="xlm-roberta-ner/2026-11-02_124019/report.html">Open report</a><a href="compare.html?a=xlm-roberta-ner/2026-11-02_124019/report.html">Compare</a></td></tr>
   </tbody>
 </table>
 </section>
@@ -116,9 +125,9 @@
             </tr>
           </thead>
           <tbody>
-<tr><td>gliner</td><td>0.6</td><td>0.939433</td><td>0.943530</td><td>0.940910</td><td><a href="gliner/2026-11-02_124023/report.html">Open report</a></td></tr>
-<tr><td>opennlp</td><td>0.5</td><td>0.264690</td><td>0.220940</td><td>0.249099</td><td><a href="opennlp/2026-11-02_124027/report.html">Open report</a></td></tr>
-<tr><td>xlm-roberta-ner</td><td>0.6</td><td>0.775395</td><td>0.750665</td><td>0.766695</td><td><a href="xlm-roberta-ner/2026-11-02_124032/report.html">Open report</a></td></tr>
+<tr><td>gliner</td><td>0.6</td><td>0.939433</td><td>0.943530</td><td>0.940910</td><td class="report-links"><a href="gliner/2026-11-02_124023/report.html">Open report</a><a href="compare.html?a=gliner/2026-11-02_124023/report.html">Compare</a></td></tr>
+<tr><td>opennlp</td><td>0.5</td><td>0.264690</td><td>0.220940</td><td>0.249099</td><td class="report-links"><a href="opennlp/2026-11-02_124027/report.html">Open report</a><a href="compare.html?a=opennlp/2026-11-02_124027/report.html">Compare</a></td></tr>
+<tr><td>xlm-roberta-ner</td><td>0.6</td><td>0.775395</td><td>0.750665</td><td>0.766695</td><td class="report-links"><a href="xlm-roberta-ner/2026-11-02_124032/report.html">Open report</a><a href="compare.html?a=xlm-roberta-ner/2026-11-02_124032/report.html">Compare</a></td></tr>
   </tbody>
 </table>
 </section>
@@ -141,9 +150,9 @@
             </tr>
           </thead>
           <tbody>
-<tr><td>gliner</td><td>0.55</td><td>0.942529</td><td>0.948567</td><td>0.944704</td><td><a href="gliner/2026-11-02_124037/report.html">Open report</a></td></tr>
-<tr><td>opennlp</td><td>0.3</td><td>0.269867</td><td>0.230599</td><td>0.255841</td><td><a href="opennlp/2026-11-02_124041/report.html">Open report</a></td></tr>
-<tr><td>xlm-roberta-ner</td><td>0.55</td><td>0.777797</td><td>0.750000</td><td>0.768014</td><td><a href="xlm-roberta-ner/2026-11-02_124047/report.html">Open report</a></td></tr>
+<tr><td>gliner</td><td>0.55</td><td>0.942529</td><td>0.948567</td><td>0.944704</td><td class="report-links"><a href="gliner/2026-11-02_124037/report.html">Open report</a><a href="compare.html?a=gliner/2026-11-02_124037/report.html">Compare</a></td></tr>
+<tr><td>opennlp</td><td>0.3</td><td>0.269867</td><td>0.230599</td><td>0.255841</td><td class="report-links"><a href="opennlp/2026-11-02_124041/report.html">Open report</a><a href="compare.html?a=opennlp/2026-11-02_124041/report.html">Compare</a></td></tr>
+<tr><td>xlm-roberta-ner</td><td>0.55</td><td>0.777797</td><td>0.750000</td><td>0.768014</td><td class="report-links"><a href="xlm-roberta-ner/2026-11-02_124047/report.html">Open report</a><a href="compare.html?a=xlm-roberta-ner/2026-11-02_124047/report.html">Compare</a></td></tr>
   </tbody>
 </table>
 </section>
@@ -166,9 +175,9 @@
             </tr>
           </thead>
           <tbody>
-<tr><td>gliner</td><td>0.4</td><td>0.941781</td><td>0.957359</td><td>0.947377</td><td><a href="gliner/2026-11-02_124051/report.html">Open report</a></td></tr>
-<tr><td>opennlp</td><td>0.2</td><td>0.271667</td><td>0.230599</td><td>0.257009</td><td><a href="opennlp/2026-11-02_124055/report.html">Open report</a></td></tr>
-<tr><td>xlm-roberta-ner</td><td>0.4</td><td>0.777578</td><td>0.756182</td><td>0.770036</td><td><a href="xlm-roberta-ner/2026-11-02_124100/report.html">Open report</a></td></tr>
+<tr><td>gliner</td><td>0.4</td><td>0.941781</td><td>0.957359</td><td>0.947377</td><td class="report-links"><a href="gliner/2026-11-02_124051/report.html">Open report</a><a href="compare.html?a=gliner/2026-11-02_124051/report.html">Compare</a></td></tr>
+<tr><td>opennlp</td><td>0.2</td><td>0.271667</td><td>0.230599</td><td>0.257009</td><td class="report-links"><a href="opennlp/2026-11-02_124055/report.html">Open report</a><a href="compare.html?a=opennlp/2026-11-02_124055/report.html">Compare</a></td></tr>
+<tr><td>xlm-roberta-ner</td><td>0.4</td><td>0.777578</td><td>0.756182</td><td>0.770036</td><td class="report-links"><a href="xlm-roberta-ner/2026-11-02_124100/report.html">Open report</a><a href="compare.html?a=xlm-roberta-ner/2026-11-02_124100/report.html">Compare</a></td></tr>
   </tbody>
 </table>
 </section>
@@ -176,7 +185,7 @@
 <section class="dataset-panel" data-dataset-panel="feedback-2026-10-29">
 <p class="note">Feedback sample (3,319 comments).</p>
 <div class="tabs" role="tablist">
-<button type="button" class="tab active" data-tab="feedback-2026-10-29::original" data-dataset="feedback-2026-10-29" role="tab" aria-selected="true">Original run</button>
+<button type="button" class="tab active" data-tab="feedback-2026-10-29::original" data-dataset="feedback-2026-10-29" role="tab" aria-selected="true">GLiNER 0.5 / OpenNLP 0 / XLM 0 / spaCy 0</button>
 <button type="button" class="tab" data-tab="feedback-2026-10-29::threshold-0.7" data-dataset="feedback-2026-10-29" role="tab" aria-selected="false">GLiNER 0.7 / OpenNLP 0.7 / XLM 0.7</button>
 <button type="button" class="tab" data-tab="feedback-2026-10-29::gliner-0.6-opennlp-0.5" data-dataset="feedback-2026-10-29" role="tab" aria-selected="false">GLiNER 0.6 / OpenNLP 0.5 / XLM 0.6</button>
 <button type="button" class="tab" data-tab="feedback-2026-10-29::gliner-0.55-opennlp-0.3" data-dataset="feedback-2026-10-29" role="tab" aria-selected="false">GLiNER 0.55 / OpenNLP 0.3 / XLM 0.55</button>
@@ -205,10 +214,10 @@
             </tr>
           </thead>
           <tbody>
-<tr><td>gliner</td><td>0.5</td><td>1268</td><td>145</td><td>1418</td><td><a href="gliner/2026-10-30_152614/report.html">Open report</a></td></tr>
-<tr><td>opennlp</td><td>none</td><td>45</td><td>17</td><td>62</td><td><a href="opennlp/2026-10-30_152618/report.html">Open report</a></td></tr>
-<tr><td>spacy-xx</td><td>none</td><td>194</td><td>96</td><td>291</td><td><a href="spacy-xx/2026-10-30_152628/report.html">Open report</a></td></tr>
-<tr><td>xlm-roberta-ner</td><td>none</td><td>55</td><td>19</td><td>74</td><td><a href="xlm-roberta-ner/2026-10-30_152624/report.html">Open report</a></td></tr>
+<tr><td>gliner</td><td>0.5</td><td>1268</td><td>145</td><td>1418</td><td class="report-links"><a href="gliner/2026-10-30_152614/report.html">Open report</a><a href="compare.html?a=gliner/2026-10-30_152614/report.html">Compare</a></td></tr>
+<tr><td>opennlp</td><td>none</td><td>45</td><td>17</td><td>62</td><td class="report-links"><a href="opennlp/2026-10-30_152618/report.html">Open report</a><a href="compare.html?a=opennlp/2026-10-30_152618/report.html">Compare</a></td></tr>
+<tr><td>spacy-xx</td><td>none</td><td>194</td><td>96</td><td>291</td><td class="report-links"><a href="spacy-xx/2026-10-30_152628/report.html">Open report</a><a href="compare.html?a=spacy-xx/2026-10-30_152628/report.html">Compare</a></td></tr>
+<tr><td>xlm-roberta-ner</td><td>none</td><td>55</td><td>19</td><td>74</td><td class="report-links"><a href="xlm-roberta-ner/2026-10-30_152624/report.html">Open report</a><a href="compare.html?a=xlm-roberta-ner/2026-10-30_152624/report.html">Compare</a></td></tr>
   </tbody>
 </table>
 </section>
@@ -231,9 +240,9 @@
             </tr>
           </thead>
           <tbody>
-<tr><td>gliner</td><td>0.7</td><td>818</td><td>53</td><td>874</td><td><a href="gliner/2026-10-30_152633/report.html">Open report</a></td></tr>
-<tr><td>opennlp</td><td>0.7</td><td>44</td><td>16</td><td>60</td><td><a href="opennlp/2026-10-30_152637/report.html">Open report</a></td></tr>
-<tr><td>xlm-roberta-ner</td><td>0.7</td><td>47</td><td>17</td><td>64</td><td><a href="xlm-roberta-ner/2026-11-02_115152/report.html">Open report</a></td></tr>
+<tr><td>gliner</td><td>0.7</td><td>818</td><td>53</td><td>874</td><td class="report-links"><a href="gliner/2026-10-30_152633/report.html">Open report</a><a href="compare.html?a=gliner/2026-10-30_152633/report.html">Compare</a></td></tr>
+<tr><td>opennlp</td><td>0.7</td><td>44</td><td>16</td><td>60</td><td class="report-links"><a href="opennlp/2026-10-30_152637/report.html">Open report</a><a href="compare.html?a=opennlp/2026-10-30_152637/report.html">Compare</a></td></tr>
+<tr><td>xlm-roberta-ner</td><td>0.7</td><td>47</td><td>17</td><td>64</td><td class="report-links"><a href="xlm-roberta-ner/2026-11-02_115152/report.html">Open report</a><a href="compare.html?a=xlm-roberta-ner/2026-11-02_115152/report.html">Compare</a></td></tr>
   </tbody>
 </table>
 </section>
@@ -256,9 +265,9 @@
             </tr>
           </thead>
           <tbody>
-<tr><td>gliner</td><td>0.6</td><td>1050</td><td>85</td><td>1139</td><td><a href="gliner/2026-10-30_152643/report.html">Open report</a></td></tr>
-<tr><td>opennlp</td><td>0.5</td><td>45</td><td>17</td><td>62</td><td><a href="opennlp/2026-10-30_152647/report.html">Open report</a></td></tr>
-<tr><td>xlm-roberta-ner</td><td>0.6</td><td>51</td><td>19</td><td>70</td><td><a href="xlm-roberta-ner/2026-11-02_115157/report.html">Open report</a></td></tr>
+<tr><td>gliner</td><td>0.6</td><td>1050</td><td>85</td><td>1139</td><td class="report-links"><a href="gliner/2026-10-30_152643/report.html">Open report</a><a href="compare.html?a=gliner/2026-10-30_152643/report.html">Compare</a></td></tr>
+<tr><td>opennlp</td><td>0.5</td><td>45</td><td>17</td><td>62</td><td class="report-links"><a href="opennlp/2026-10-30_152647/report.html">Open report</a><a href="compare.html?a=opennlp/2026-10-30_152647/report.html">Compare</a></td></tr>
+<tr><td>xlm-roberta-ner</td><td>0.6</td><td>51</td><td>19</td><td>70</td><td class="report-links"><a href="xlm-roberta-ner/2026-11-02_115157/report.html">Open report</a><a href="compare.html?a=xlm-roberta-ner/2026-11-02_115157/report.html">Compare</a></td></tr>
   </tbody>
 </table>
 </section>
@@ -281,9 +290,9 @@
             </tr>
           </thead>
           <tbody>
-<tr><td>gliner</td><td>0.55</td><td>1150</td><td>113</td><td>1268</td><td><a href="gliner/2026-10-30_152652/report.html">Open report</a></td></tr>
-<tr><td>opennlp</td><td>0.3</td><td>45</td><td>17</td><td>62</td><td><a href="opennlp/2026-10-30_143532/report.html">Open report</a></td></tr>
-<tr><td>xlm-roberta-ner</td><td>0.55</td><td>51</td><td>19</td><td>70</td><td><a href="xlm-roberta-ner/2026-11-02_115201/report.html">Open report</a></td></tr>
+<tr><td>gliner</td><td>0.55</td><td>1150</td><td>113</td><td>1268</td><td class="report-links"><a href="gliner/2026-10-30_152652/report.html">Open report</a><a href="compare.html?a=gliner/2026-10-30_152652/report.html">Compare</a></td></tr>
+<tr><td>opennlp</td><td>0.3</td><td>45</td><td>17</td><td>62</td><td class="report-links"><a href="opennlp/2026-10-30_143532/report.html">Open report</a><a href="compare.html?a=opennlp/2026-10-30_143532/report.html">Compare</a></td></tr>
+<tr><td>xlm-roberta-ner</td><td>0.55</td><td>51</td><td>19</td><td>70</td><td class="report-links"><a href="xlm-roberta-ner/2026-11-02_115201/report.html">Open report</a><a href="compare.html?a=xlm-roberta-ner/2026-11-02_115201/report.html">Compare</a></td></tr>
   </tbody>
 </table>
 </section>
@@ -306,9 +315,9 @@
             </tr>
           </thead>
           <tbody>
-<tr><td>gliner</td><td>0.4</td><td>1504</td><td>223</td><td>1732</td><td><a href="gliner/2026-10-30_144034/report.html">Open report</a></td></tr>
-<tr><td>opennlp</td><td>0.2</td><td>45</td><td>17</td><td>62</td><td><a href="opennlp/2026-10-30_144040/report.html">Open report</a></td></tr>
-<tr><td>xlm-roberta-ner</td><td>0.4</td><td>54</td><td>19</td><td>73</td><td><a href="xlm-roberta-ner/2026-11-02_115205/report.html">Open report</a></td></tr>
+<tr><td>gliner</td><td>0.4</td><td>1504</td><td>223</td><td>1732</td><td class="report-links"><a href="gliner/2026-10-30_144034/report.html">Open report</a><a href="compare.html?a=gliner/2026-10-30_144034/report.html">Compare</a></td></tr>
+<tr><td>opennlp</td><td>0.2</td><td>45</td><td>17</td><td>62</td><td class="report-links"><a href="opennlp/2026-10-30_144040/report.html">Open report</a><a href="compare.html?a=opennlp/2026-10-30_144040/report.html">Compare</a></td></tr>
+<tr><td>xlm-roberta-ner</td><td>0.4</td><td>54</td><td>19</td><td>73</td><td class="report-links"><a href="xlm-roberta-ner/2026-11-02_115205/report.html">Open report</a><a href="compare.html?a=xlm-roberta-ner/2026-11-02_115205/report.html">Compare</a></td></tr>
   </tbody>
 </table>
 </section>
@@ -331,9 +340,9 @@
             </tr>
           </thead>
           <tbody>
-<tr><td>gliner</td><td>0.9</td><td>364</td><td>6</td><td>371</td><td><a href="gliner/2026-10-30_155249/report.html">Open report</a></td></tr>
-<tr><td>opennlp</td><td>0.1</td><td>45</td><td>17</td><td>62</td><td><a href="opennlp/2026-10-30_155254/report.html">Open report</a></td></tr>
-<tr><td>xlm-roberta-ner</td><td>0.9</td><td>40</td><td>13</td><td>53</td><td><a href="xlm-roberta-ner/2026-11-02_115210/report.html">Open report</a></td></tr>
+<tr><td>gliner</td><td>0.9</td><td>364</td><td>6</td><td>371</td><td class="report-links"><a href="gliner/2026-10-30_155249/report.html">Open report</a><a href="compare.html?a=gliner/2026-10-30_155249/report.html">Compare</a></td></tr>
+<tr><td>opennlp</td><td>0.1</td><td>45</td><td>17</td><td>62</td><td class="report-links"><a href="opennlp/2026-10-30_155254/report.html">Open report</a><a href="compare.html?a=opennlp/2026-10-30_155254/report.html">Compare</a></td></tr>
+<tr><td>xlm-roberta-ner</td><td>0.9</td><td>40</td><td>13</td><td>53</td><td class="report-links"><a href="xlm-roberta-ner/2026-11-02_115210/report.html">Open report</a><a href="compare.html?a=xlm-roberta-ner/2026-11-02_115210/report.html">Compare</a></td></tr>
   </tbody>
 </table>
 </section>
@@ -356,9 +365,9 @@
             </tr>
           </thead>
           <tbody>
-<tr><td>gliner</td><td>0.95</td><td>176</td><td>2</td><td>178</td><td><a href="gliner/2026-11-02_101753/report.html">Open report</a></td></tr>
-<tr><td>opennlp</td><td>0</td><td>45</td><td>17</td><td>62</td><td><a href="opennlp/2026-11-02_101758/report.html">Open report</a></td></tr>
-<tr><td>xlm-roberta-ner</td><td>0.95</td><td>36</td><td>11</td><td>47</td><td><a href="xlm-roberta-ner/2026-11-02_115214/report.html">Open report</a></td></tr>
+<tr><td>gliner</td><td>0.95</td><td>176</td><td>2</td><td>178</td><td class="report-links"><a href="gliner/2026-11-02_101753/report.html">Open report</a><a href="compare.html?a=gliner/2026-11-02_101753/report.html">Compare</a></td></tr>
+<tr><td>opennlp</td><td>0</td><td>45</td><td>17</td><td>62</td><td class="report-links"><a href="opennlp/2026-11-02_101758/report.html">Open report</a><a href="compare.html?a=opennlp/2026-11-02_101758/report.html">Compare</a></td></tr>
+<tr><td>xlm-roberta-ner</td><td>0.95</td><td>36</td><td>11</td><td>47</td><td class="report-links"><a href="xlm-roberta-ner/2026-11-02_115214/report.html">Open report</a><a href="compare.html?a=xlm-roberta-ner/2026-11-02_115214/report.html">Compare</a></td></tr>
   </tbody>
 </table>
 </section>
@@ -381,9 +390,9 @@
             </tr>
           </thead>
           <tbody>
-<tr><td>gliner</td><td>0.975</td><td>47</td><td>1</td><td>48</td><td><a href="gliner/2026-11-02_103534/report.html">Open report</a></td></tr>
-<tr><td>opennlp</td><td>0</td><td>45</td><td>17</td><td>62</td><td><a href="opennlp/2026-11-02_103538/report.html">Open report</a></td></tr>
-<tr><td>xlm-roberta-ner</td><td>0.975</td><td>30</td><td>10</td><td>40</td><td><a href="xlm-roberta-ner/2026-11-02_115219/report.html">Open report</a></td></tr>
+<tr><td>gliner</td><td>0.975</td><td>47</td><td>1</td><td>48</td><td class="report-links"><a href="gliner/2026-11-02_103534/report.html">Open report</a><a href="compare.html?a=gliner/2026-11-02_103534/report.html">Compare</a></td></tr>
+<tr><td>opennlp</td><td>0</td><td>45</td><td>17</td><td>62</td><td class="report-links"><a href="opennlp/2026-11-02_103538/report.html">Open report</a><a href="compare.html?a=opennlp/2026-11-02_103538/report.html">Compare</a></td></tr>
+<tr><td>xlm-roberta-ner</td><td>0.975</td><td>30</td><td>10</td><td>40</td><td class="report-links"><a href="xlm-roberta-ner/2026-11-02_115219/report.html">Open report</a><a href="compare.html?a=xlm-roberta-ner/2026-11-02_115219/report.html">Compare</a></td></tr>
   </tbody>
 </table>
 </section>

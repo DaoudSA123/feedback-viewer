@@ -972,10 +972,19 @@ public class NameRedactionBaselineEval {
             .thresholds { margin: 0.75rem 0 1rem; padding: 0; list-style: none; }
             .thresholds li { margin: 0.2rem 0; }
             .muted { color: #666; }
+            .nav { margin: 0.75rem 0 0; }
+            .nav a {
+              color: #1b1b1b; text-decoration: none; border: 1px solid #c9beae; background: #fffdf8;
+              padding: 0.4rem 0.75rem; border-radius: 8px; font-family: "Avenir Next", "Segoe UI", sans-serif;
+              font-size: 0.95rem;
+            }
+            .nav a:hover { background: #ebe4d8; }
+            .report-links a + a { margin-left: 0.65rem; }
           </style>
         </head>
         <body>
           <h1>Name redaction model comparison</h1>
+          <p class="nav"><a href="compare.html">Side-by-side compare</a></p>
           <div class="dataset-tabs" role="tablist" aria-label="Data samples">
         """
             + datasetTabs
@@ -1053,6 +1062,31 @@ public class NameRedactionBaselineEval {
         </html>
         """;
     Files.writeString(evalResultsDir.resolve("index.html"), html, StandardCharsets.UTF_8);
+    writeCompareHtml(evalResultsDir, runsDoc);
+  }
+
+  /** Refreshes compare.html catalog from runs.json (keeps page shell if already present). */
+  private static void writeCompareHtml(Path evalResultsDir, JsonNode runsDoc) throws IOException {
+    Path comparePath = evalResultsDir.resolve("compare.html");
+    String runsJson = MAPPER.writeValueAsString(runsDoc);
+    if (!Files.exists(comparePath)) {
+      System.out.println(
+          "Note: compare.html missing under "
+              + evalResultsDir
+              + " — skip refresh (create/commit the page once).");
+      return;
+    }
+    String html = Files.readString(comparePath, StandardCharsets.UTF_8);
+    String open = "<script type=\"application/json\" id=\"runs-data\">";
+    int start = html.indexOf(open);
+    int end = html.indexOf("</script>", start);
+    if (start < 0 || end < 0) {
+      System.out.println("Warning: could not refresh RUNS catalog inside compare.html");
+      return;
+    }
+    String updated =
+        html.substring(0, start + open.length()) + "\n" + runsJson + "\n" + html.substring(end);
+    Files.writeString(comparePath, updated, StandardCharsets.UTF_8);
   }
 
   private static String chooseDefaultDatasetId(JsonNode datasets, String activeDatasetId) {
@@ -1164,9 +1198,11 @@ public class NameRedactionBaselineEval {
           .append("<td>")
           .append(esc(all))
           .append("</td>")
-          .append("<td><a href=\"")
+          .append("<td class=\"report-links\"><a href=\"")
           .append(esc(href))
-          .append("\">Open report</a></td>")
+          .append("\">Open report</a><a href=\"compare.html?a=")
+          .append(esc(href))
+          .append("\">Compare</a></td>")
           .append("</tr>\n");
     }
 
@@ -1345,8 +1381,8 @@ public class NameRedactionBaselineEval {
             .count { margin:.5rem 0 1rem; }
             .back { display:inline-block; margin:0 0 1rem; padding:.45rem .8rem; border:1px solid var(--line); border-radius:8px; background:#fffdf8; color:var(--ink); text-decoration:none; font-family:"Avenir Next","Segoe UI",sans-serif; font-size:.95rem; }
             .back:hover { background:#efe6d4; }
-            .to-top { position:fixed; right:1.25rem; bottom:1.25rem; z-index:20; display:none; padding:.55rem .85rem; border:1px solid var(--line); border-radius:8px; background:#fffdf8; color:var(--ink); text-decoration:none; font-family:"Avenir Next","Segoe UI",sans-serif; font-size:.95rem; box-shadow:0 6px 18px rgba(40,25,0,.12); }
-            .to-top:hover { background:#efe6d4; }
+            .to-top { position:fixed; right:1.25rem; bottom:1.25rem; z-index:40; display:none; padding:.75rem 1.15rem; border:2px solid #1b1b1b; border-radius:10px; background:#1b1b1b; color:#fff8e7; text-decoration:none; font-family:"Avenir Next","Segoe UI",sans-serif; font-size:1.05rem; font-weight:700; letter-spacing:.02em; box-shadow:0 10px 28px rgba(40,25,0,.28); }
+            .to-top:hover { background:#3a2f1c; border-color:#3a2f1c; color:#fff8e7; }
             .to-top.visible { display:inline-block; }
           </style>
         </head>
@@ -1632,8 +1668,8 @@ public class NameRedactionBaselineEval {
             .count { margin:.5rem 0 1rem; }
             .back { display:inline-block; margin:0 0 1rem; padding:.45rem .8rem; border:1px solid var(--line); border-radius:8px; background:#fffdf8; color:var(--ink); text-decoration:none; font-family:"Avenir Next","Segoe UI",sans-serif; font-size:.95rem; }
             .back:hover { background:#efe6d4; }
-            .to-top { position:fixed; right:1.25rem; bottom:1.25rem; z-index:20; display:none; padding:.55rem .85rem; border:1px solid var(--line); border-radius:8px; background:#fffdf8; color:var(--ink); text-decoration:none; font-family:"Avenir Next","Segoe UI",sans-serif; font-size:.95rem; box-shadow:0 6px 18px rgba(40,25,0,.12); }
-            .to-top:hover { background:#efe6d4; }
+            .to-top { position:fixed; right:1.25rem; bottom:1.25rem; z-index:40; display:none; padding:.75rem 1.15rem; border:2px solid #1b1b1b; border-radius:10px; background:#1b1b1b; color:#fff8e7; text-decoration:none; font-family:"Avenir Next","Segoe UI",sans-serif; font-size:1.05rem; font-weight:700; letter-spacing:.02em; box-shadow:0 10px 28px rgba(40,25,0,.28); }
+            .to-top:hover { background:#3a2f1c; border-color:#3a2f1c; color:#fff8e7; }
             .to-top.visible { display:inline-block; }
           </style>
         </head>
