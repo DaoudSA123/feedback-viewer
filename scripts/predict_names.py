@@ -4,7 +4,9 @@ Create person-name guesses for the labeled evaluation comments.
 
 Usage:
   python3 scripts/predict_names.py gliner
+  python3 scripts/predict_names.py gliner --threshold 0.7
   python3 scripts/predict_names.py xlm-roberta-ner
+  python3 scripts/predict_names.py xlm-roberta-ner --threshold 0.8
   python3 scripts/predict_names.py spacy-xx
 
 Writes:
@@ -93,7 +95,7 @@ def predict_gliner(comments: list[dict], threshold: float) -> list[dict]:
     return out
 
 
-def predict_xlm_roberta(comments: list[dict]) -> list[dict]:
+def predict_xlm_roberta(comments: list[dict], threshold: float) -> list[dict]:
     try:
         from transformers import pipeline
     except ImportError as exc:
@@ -104,6 +106,7 @@ def predict_xlm_roberta(comments: list[dict]) -> list[dict]:
 
     model_name = "Davlan/xlm-roberta-base-ner-hrl"
     print(f"Loading Hugging Face NER pipeline {model_name} (first time may download)...")
+    print(f"XLM-RoBERTa confidence threshold: {threshold}")
     ner = pipeline(
         "token-classification",
         model=model_name,
@@ -121,6 +124,9 @@ def predict_xlm_roberta(comments: list[dict]) -> list[dict]:
             for ent in ents:
                 label = str(ent.get("entity_group") or ent.get("entity") or "").upper()
                 if label not in keep and not label.endswith("PER"):
+                    continue
+                score = float(ent.get("score", 0.0))
+                if score < threshold:
                     continue
                 start = int(ent["start"])
                 end = int(ent["end"])
@@ -217,8 +223,11 @@ def main() -> int:
     parser.add_argument(
         "--threshold",
         type=float,
-        default=0.5,
-        help="GLiNER confidence threshold (ignored for other models)",
+        default=None,
+        help=(
+            "Confidence threshold for GLiNER (default 0.5) and XLM-RoBERTa "
+            "(default 0.0 = keep all). Ignored for spaCy."
+        ),
     )
     args = parser.parse_args()
 
@@ -239,9 +248,11 @@ def main() -> int:
     print()
 
     if args.model == "gliner":
-        rows = predict_gliner(comments, args.threshold)
+        threshold = 0.5 if args.threshold is None else args.threshold
+        rows = predict_gliner(comments, threshold)
     elif args.model == "xlm-roberta-ner":
-        rows = predict_xlm_roberta(comments)
+        threshold = 0.0 if args.threshold is None else args.threshold
+        rows = predict_xlm_roberta(comments, threshold)
     else:
         rows = predict_spacy_xx(comments)
 

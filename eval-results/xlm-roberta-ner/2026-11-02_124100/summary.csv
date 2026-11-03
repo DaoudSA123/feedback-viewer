@@ -1,0 +1,4 @@
+language,comments,gold_names,predicted_names,true_positives,false_positives,false_negatives,precision,recall,f1,hard_negative_comments,hard_negative_correct,hard_negative_accuracy
+english,798,795,826,567,120,228,0.854722,0.713208,0.777578,31,28,0.903226
+french,446,444,431,300,61,144,0.858469,0.675676,0.756182,17,15,0.882353
+combined,1244,1239,1257,867,181,372,0.856006,0.699758,0.770036,48,43,0.895833

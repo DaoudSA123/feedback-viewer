@@ -32,22 +32,21 @@
 </head>
 <body>
   <h1>Name redaction model comparison</h1>
-  <p>Pick a data sample first, then an experiment run. Only models scored in that run are listed.</p>
   <div class="dataset-tabs" role="tablist" aria-label="Data samples">
-<button type="button" class="dataset-tab" data-dataset="synthetic-pi" role="tab" aria-selected="false">Sample 1 — Synthetic PI test</button>
-<button type="button" class="dataset-tab active" data-dataset="feedback-2026-10-29" role="tab" aria-selected="true">Sample 2 — feedback_2026-10-29</button>
+<button type="button" class="dataset-tab active" data-dataset="synthetic-pi" role="tab" aria-selected="true">Sample 1 — Synthetic PI test</button>
+<button type="button" class="dataset-tab" data-dataset="feedback-2026-10-29" role="tab" aria-selected="false">Sample 2 — feedback</button>
   </div>
-<section class="dataset-panel" data-dataset-panel="synthetic-pi">
-<p class="note">Labeled synthetic name dataset (1,260 comments). Threshold experiments on this sample.</p>
+<section class="dataset-panel active" data-dataset-panel="synthetic-pi">
+<p class="note">Labeled synthetic name dataset (1,260 comments).</p>
 <div class="tabs" role="tablist">
-<button type="button" class="tab active" data-tab="synthetic-pi::original" data-dataset="synthetic-pi" role="tab" aria-selected="true">Original run</button>
-<button type="button" class="tab" data-tab="synthetic-pi::threshold-0.7" data-dataset="synthetic-pi" role="tab" aria-selected="false">Threshold 0.7</button>
-<button type="button" class="tab" data-tab="synthetic-pi::gliner-0.6-opennlp-0.5" data-dataset="synthetic-pi" role="tab" aria-selected="false">GLiNER 0.6 / OpenNLP 0.5</button>
-<button type="button" class="tab" data-tab="synthetic-pi::gliner-0.55-opennlp-0.3" data-dataset="synthetic-pi" role="tab" aria-selected="false">GLiNER 0.55 / OpenNLP 0.3</button>
-<button type="button" class="tab" data-tab="synthetic-pi::gliner-0.4-opennlp-0.2" data-dataset="synthetic-pi" role="tab" aria-selected="false">GLiNER 0.4 / OpenNLP 0.2</button>
+<button type="button" class="tab" data-tab="synthetic-pi::original" data-dataset="synthetic-pi" role="tab" aria-selected="false">Original run</button>
+<button type="button" class="tab" data-tab="synthetic-pi::threshold-0.7" data-dataset="synthetic-pi" role="tab" aria-selected="false">GLiNER 0.7 / OpenNLP 0.7 / XLM 0.7</button>
+<button type="button" class="tab" data-tab="synthetic-pi::gliner-0.6-opennlp-0.5" data-dataset="synthetic-pi" role="tab" aria-selected="false">GLiNER 0.6 / OpenNLP 0.5 / XLM 0.6</button>
+<button type="button" class="tab" data-tab="synthetic-pi::gliner-0.55-opennlp-0.3" data-dataset="synthetic-pi" role="tab" aria-selected="false">GLiNER 0.55 / OpenNLP 0.3 / XLM 0.55</button>
+<button type="button" class="tab active" data-tab="synthetic-pi::gliner-0.4-opennlp-0.2" data-dataset="synthetic-pi" role="tab" aria-selected="true">GLiNER 0.4 / OpenNLP 0.2 / XLM 0.4</button>
 </div>
-<section class="panel active" data-panel="synthetic-pi::original" data-dataset="synthetic-pi" role="tabpanel">
-<p class="note">GLiNER threshold 0.5; OpenNLP, XLM-RoBERTa, spaCy: no threshold</p>
+<section class="panel" data-panel="synthetic-pi::original" data-dataset="synthetic-pi" role="tabpanel">
+<p class="note">GLiNER 0.5; OpenNLP, XLM-RoBERTa, spaCy: no threshold.</p>
 <ul class="thresholds">
 <li><strong>gliner</strong>: threshold 0.5</li>
 <li><strong>opennlp</strong>: threshold none</li>
@@ -66,18 +65,19 @@
             </tr>
           </thead>
           <tbody>
-<tr><td>gliner</td><td>0.5</td><td>0.850336</td><td>0.829162</td><td>0.842723</td><td><a href="gliner/2026-10-29_140229/report.html">Open report</a></td></tr>
-<tr><td>opennlp</td><td>none</td><td>0.233367</td><td>0.187845</td><td>0.217105</td><td><a href="opennlp/2026-10-29_133107/report.html">Open report</a></td></tr>
-<tr><td>spacy-xx</td><td>none</td><td>0.560059</td><td>0.639697</td><td>0.589385</td><td><a href="spacy-xx/2026-10-29_140449/report.html">Open report</a></td></tr>
-<tr><td>xlm-roberta-ner</td><td>none</td><td>0.083282</td><td>0.099211</td><td>0.088889</td><td><a href="xlm-roberta-ner/2026-10-29_140433/report.html">Open report</a></td></tr>
+<tr><td>gliner</td><td>0.5</td><td>0.946156</td><td>0.950028</td><td>0.947549</td><td><a href="gliner/2026-11-02_122358/report.html">Open report</a></td></tr>
+<tr><td>opennlp</td><td>none</td><td>0.271667</td><td>0.230599</td><td>0.257009</td><td><a href="opennlp/2026-11-02_122402/report.html">Open report</a></td></tr>
+<tr><td>spacy-xx</td><td>none</td><td>0.694151</td><td>0.691661</td><td>0.693522</td><td><a href="spacy-xx/2026-11-02_122412/report.html">Open report</a></td></tr>
+<tr><td>xlm-roberta-ner</td><td>none</td><td>0.775869</td><td>0.758866</td><td>0.769885</td><td><a href="xlm-roberta-ner/2026-11-02_122407/report.html">Open report</a></td></tr>
   </tbody>
 </table>
 </section>
 <section class="panel" data-panel="synthetic-pi::threshold-0.7" data-dataset="synthetic-pi" role="tabpanel">
-<p class="note">GLiNER 0.7; OpenNLP 0.7</p>
+<p class="note">GLiNER 0.7; OpenNLP 0.7; XLM-RoBERTa 0.7.</p>
 <ul class="thresholds">
 <li><strong>gliner</strong>: threshold 0.7</li>
 <li><strong>opennlp</strong>: threshold 0.7</li>
+<li><strong>xlm-roberta-ner</strong>: threshold 0.7</li>
 </ul>
 <table>
   <thead>
@@ -91,16 +91,18 @@
             </tr>
           </thead>
           <tbody>
-<tr><td>gliner</td><td>0.7</td><td>0.851735</td><td>0.828283</td><td>0.843296</td><td><a href="gliner/2026-10-30_114726/report.html">Open report</a></td></tr>
-<tr><td>opennlp</td><td>0.7</td><td>0.212279</td><td>0.164794</td><td>0.195318</td><td><a href="opennlp/2026-10-30_114710/report.html">Open report</a></td></tr>
+<tr><td>gliner</td><td>0.7</td><td>0.919905</td><td>0.923261</td><td>0.921114</td><td><a href="gliner/2026-11-02_124009/report.html">Open report</a></td></tr>
+<tr><td>opennlp</td><td>0.7</td><td>0.248372</td><td>0.207717</td><td>0.233871</td><td><a href="opennlp/2026-11-02_124013/report.html">Open report</a></td></tr>
+<tr><td>xlm-roberta-ner</td><td>0.7</td><td>0.764338</td><td>0.744725</td><td>0.757419</td><td><a href="xlm-roberta-ner/2026-11-02_124019/report.html">Open report</a></td></tr>
   </tbody>
 </table>
 </section>
 <section class="panel" data-panel="synthetic-pi::gliner-0.6-opennlp-0.5" data-dataset="synthetic-pi" role="tabpanel">
-<p class="note">GLiNER 0.6; OpenNLP 0.5</p>
+<p class="note">GLiNER 0.6; OpenNLP 0.5; XLM-RoBERTa 0.6.</p>
 <ul class="thresholds">
 <li><strong>gliner</strong>: threshold 0.6</li>
 <li><strong>opennlp</strong>: threshold 0.5</li>
+<li><strong>xlm-roberta-ner</strong>: threshold 0.6</li>
 </ul>
 <table>
   <thead>
@@ -114,16 +116,18 @@
             </tr>
           </thead>
           <tbody>
-<tr><td>gliner</td><td>0.6</td><td>0.856079</td><td>0.834437</td><td>0.848292</td><td><a href="gliner/2026-10-30_115123/report.html">Open report</a></td></tr>
-<tr><td>opennlp</td><td>0.5</td><td>0.226337</td><td>0.178108</td><td>0.209133</td><td><a href="opennlp/2026-10-30_115127/report.html">Open report</a></td></tr>
+<tr><td>gliner</td><td>0.6</td><td>0.939433</td><td>0.943530</td><td>0.940910</td><td><a href="gliner/2026-11-02_124023/report.html">Open report</a></td></tr>
+<tr><td>opennlp</td><td>0.5</td><td>0.264690</td><td>0.220940</td><td>0.249099</td><td><a href="opennlp/2026-11-02_124027/report.html">Open report</a></td></tr>
+<tr><td>xlm-roberta-ner</td><td>0.6</td><td>0.775395</td><td>0.750665</td><td>0.766695</td><td><a href="xlm-roberta-ner/2026-11-02_124032/report.html">Open report</a></td></tr>
   </tbody>
 </table>
 </section>
 <section class="panel" data-panel="synthetic-pi::gliner-0.55-opennlp-0.3" data-dataset="synthetic-pi" role="tabpanel">
-<p class="note">GLiNER 0.55; OpenNLP 0.3</p>
+<p class="note">GLiNER 0.55; OpenNLP 0.3; XLM-RoBERTa 0.55.</p>
 <ul class="thresholds">
 <li><strong>gliner</strong>: threshold 0.55</li>
 <li><strong>opennlp</strong>: threshold 0.3</li>
+<li><strong>xlm-roberta-ner</strong>: threshold 0.55</li>
 </ul>
 <table>
   <thead>
@@ -137,16 +141,18 @@
             </tr>
           </thead>
           <tbody>
-<tr><td>gliner</td><td>0.55</td><td>0.851692</td><td>0.833698</td><td>0.845215</td><td><a href="gliner/2026-10-30_115720/report.html">Open report</a></td></tr>
-<tr><td>opennlp</td><td>0.3</td><td>0.231557</td><td>0.187845</td><td>0.215932</td><td><a href="opennlp/2026-10-30_115724/report.html">Open report</a></td></tr>
+<tr><td>gliner</td><td>0.55</td><td>0.942529</td><td>0.948567</td><td>0.944704</td><td><a href="gliner/2026-11-02_124037/report.html">Open report</a></td></tr>
+<tr><td>opennlp</td><td>0.3</td><td>0.269867</td><td>0.230599</td><td>0.255841</td><td><a href="opennlp/2026-11-02_124041/report.html">Open report</a></td></tr>
+<tr><td>xlm-roberta-ner</td><td>0.55</td><td>0.777797</td><td>0.750000</td><td>0.768014</td><td><a href="xlm-roberta-ner/2026-11-02_124047/report.html">Open report</a></td></tr>
   </tbody>
 </table>
 </section>
-<section class="panel" data-panel="synthetic-pi::gliner-0.4-opennlp-0.2" data-dataset="synthetic-pi" role="tabpanel">
-<p class="note">GLiNER 0.4; OpenNLP 0.2</p>
+<section class="panel active" data-panel="synthetic-pi::gliner-0.4-opennlp-0.2" data-dataset="synthetic-pi" role="tabpanel">
+<p class="note">GLiNER 0.4; OpenNLP 0.2; XLM-RoBERTa 0.4.</p>
 <ul class="thresholds">
 <li><strong>gliner</strong>: threshold 0.4</li>
 <li><strong>opennlp</strong>: threshold 0.2</li>
+<li><strong>xlm-roberta-ner</strong>: threshold 0.4</li>
 </ul>
 <table>
   <thead>
@@ -160,23 +166,26 @@
             </tr>
           </thead>
           <tbody>
-<tr><td>gliner</td><td>0.4</td><td>0.845597</td><td>0.827957</td><td>0.839258</td><td><a href="gliner/2026-10-30_130847/report.html">Open report</a></td></tr>
-<tr><td>opennlp</td><td>0.2</td><td>0.233367</td><td>0.187845</td><td>0.217105</td><td><a href="opennlp/2026-10-30_130852/report.html">Open report</a></td></tr>
+<tr><td>gliner</td><td>0.4</td><td>0.941781</td><td>0.957359</td><td>0.947377</td><td><a href="gliner/2026-11-02_124051/report.html">Open report</a></td></tr>
+<tr><td>opennlp</td><td>0.2</td><td>0.271667</td><td>0.230599</td><td>0.257009</td><td><a href="opennlp/2026-11-02_124055/report.html">Open report</a></td></tr>
+<tr><td>xlm-roberta-ner</td><td>0.4</td><td>0.777578</td><td>0.756182</td><td>0.770036</td><td><a href="xlm-roberta-ner/2026-11-02_124100/report.html">Open report</a></td></tr>
   </tbody>
 </table>
 </section>
 </section>
-<section class="dataset-panel active" data-dataset-panel="feedback-2026-10-29">
-<p class="note">Real Oct 29 feedback sample (3,319 comments).</p>
+<section class="dataset-panel" data-dataset-panel="feedback-2026-10-29">
+<p class="note">Feedback sample (3,319 comments).</p>
 <div class="tabs" role="tablist">
-<button type="button" class="tab" data-tab="feedback-2026-10-29::original" data-dataset="feedback-2026-10-29" role="tab" aria-selected="false">Original run</button>
-<button type="button" class="tab" data-tab="feedback-2026-10-29::threshold-0.7" data-dataset="feedback-2026-10-29" role="tab" aria-selected="false">Threshold 0.7</button>
-<button type="button" class="tab" data-tab="feedback-2026-10-29::gliner-0.6-opennlp-0.5" data-dataset="feedback-2026-10-29" role="tab" aria-selected="false">GLiNER 0.6 / OpenNLP 0.5</button>
-<button type="button" class="tab" data-tab="feedback-2026-10-29::gliner-0.55-opennlp-0.3" data-dataset="feedback-2026-10-29" role="tab" aria-selected="false">GLiNER 0.55 / OpenNLP 0.3</button>
-<button type="button" class="tab" data-tab="feedback-2026-10-29::gliner-0.4-opennlp-0.2" data-dataset="feedback-2026-10-29" role="tab" aria-selected="false">GLiNER 0.4 / OpenNLP 0.2</button>
-<button type="button" class="tab active" data-tab="feedback-2026-10-29::gliner-0.9-opennlp-0.1" data-dataset="feedback-2026-10-29" role="tab" aria-selected="true">GLiNER 0.9 / OpenNLP 0.1</button>
+<button type="button" class="tab active" data-tab="feedback-2026-10-29::original" data-dataset="feedback-2026-10-29" role="tab" aria-selected="true">Original run</button>
+<button type="button" class="tab" data-tab="feedback-2026-10-29::threshold-0.7" data-dataset="feedback-2026-10-29" role="tab" aria-selected="false">GLiNER 0.7 / OpenNLP 0.7 / XLM 0.7</button>
+<button type="button" class="tab" data-tab="feedback-2026-10-29::gliner-0.6-opennlp-0.5" data-dataset="feedback-2026-10-29" role="tab" aria-selected="false">GLiNER 0.6 / OpenNLP 0.5 / XLM 0.6</button>
+<button type="button" class="tab" data-tab="feedback-2026-10-29::gliner-0.55-opennlp-0.3" data-dataset="feedback-2026-10-29" role="tab" aria-selected="false">GLiNER 0.55 / OpenNLP 0.3 / XLM 0.55</button>
+<button type="button" class="tab" data-tab="feedback-2026-10-29::gliner-0.4-opennlp-0.2" data-dataset="feedback-2026-10-29" role="tab" aria-selected="false">GLiNER 0.4 / OpenNLP 0.2 / XLM 0.4</button>
+<button type="button" class="tab" data-tab="feedback-2026-10-29::gliner-0.9-opennlp-0.1" data-dataset="feedback-2026-10-29" role="tab" aria-selected="false">GLiNER 0.9 / OpenNLP 0.1 / XLM 0.9</button>
+<button type="button" class="tab" data-tab="feedback-2026-10-29::gliner-0.95-opennlp-0" data-dataset="feedback-2026-10-29" role="tab" aria-selected="false">GLiNER 0.95 / OpenNLP 0 / XLM 0.95</button>
+<button type="button" class="tab" data-tab="feedback-2026-10-29::gliner-0.975-opennlp-0" data-dataset="feedback-2026-10-29" role="tab" aria-selected="false">GLiNER 0.975 / OpenNLP 0 / XLM 0.975</button>
 </div>
-<section class="panel" data-panel="feedback-2026-10-29::original" data-dataset="feedback-2026-10-29" role="tabpanel">
+<section class="panel active" data-panel="feedback-2026-10-29::original" data-dataset="feedback-2026-10-29" role="tabpanel">
 <p class="note">GLiNER 0.5; OpenNLP none; XLM-RoBERTa/spaCy no threshold.</p>
 <ul class="thresholds">
 <li><strong>gliner</strong>: threshold 0.5</li>
@@ -204,10 +213,11 @@
 </table>
 </section>
 <section class="panel" data-panel="feedback-2026-10-29::threshold-0.7" data-dataset="feedback-2026-10-29" role="tabpanel">
-<p class="note">GLiNER 0.7; OpenNLP 0.7.</p>
+<p class="note">GLiNER 0.7; OpenNLP 0.7; XLM-RoBERTa 0.7.</p>
 <ul class="thresholds">
 <li><strong>gliner</strong>: threshold 0.7</li>
 <li><strong>opennlp</strong>: threshold 0.7</li>
+<li><strong>xlm-roberta-ner</strong>: threshold 0.7</li>
 </ul>
 <table>
   <thead>
@@ -223,14 +233,16 @@
           <tbody>
 <tr><td>gliner</td><td>0.7</td><td>818</td><td>53</td><td>874</td><td><a href="gliner/2026-10-30_152633/report.html">Open report</a></td></tr>
 <tr><td>opennlp</td><td>0.7</td><td>44</td><td>16</td><td>60</td><td><a href="opennlp/2026-10-30_152637/report.html">Open report</a></td></tr>
+<tr><td>xlm-roberta-ner</td><td>0.7</td><td>47</td><td>17</td><td>64</td><td><a href="xlm-roberta-ner/2026-11-02_115152/report.html">Open report</a></td></tr>
   </tbody>
 </table>
 </section>
 <section class="panel" data-panel="feedback-2026-10-29::gliner-0.6-opennlp-0.5" data-dataset="feedback-2026-10-29" role="tabpanel">
-<p class="note">GLiNER 0.6; OpenNLP 0.5.</p>
+<p class="note">GLiNER 0.6; OpenNLP 0.5; XLM-RoBERTa 0.6.</p>
 <ul class="thresholds">
 <li><strong>gliner</strong>: threshold 0.6</li>
 <li><strong>opennlp</strong>: threshold 0.5</li>
+<li><strong>xlm-roberta-ner</strong>: threshold 0.6</li>
 </ul>
 <table>
   <thead>
@@ -246,14 +258,16 @@
           <tbody>
 <tr><td>gliner</td><td>0.6</td><td>1050</td><td>85</td><td>1139</td><td><a href="gliner/2026-10-30_152643/report.html">Open report</a></td></tr>
 <tr><td>opennlp</td><td>0.5</td><td>45</td><td>17</td><td>62</td><td><a href="opennlp/2026-10-30_152647/report.html">Open report</a></td></tr>
+<tr><td>xlm-roberta-ner</td><td>0.6</td><td>51</td><td>19</td><td>70</td><td><a href="xlm-roberta-ner/2026-11-02_115157/report.html">Open report</a></td></tr>
   </tbody>
 </table>
 </section>
 <section class="panel" data-panel="feedback-2026-10-29::gliner-0.55-opennlp-0.3" data-dataset="feedback-2026-10-29" role="tabpanel">
-<p class="note">GLiNER 0.55; OpenNLP 0.3.</p>
+<p class="note">GLiNER 0.55; OpenNLP 0.3; XLM-RoBERTa 0.55.</p>
 <ul class="thresholds">
 <li><strong>gliner</strong>: threshold 0.55</li>
 <li><strong>opennlp</strong>: threshold 0.3</li>
+<li><strong>xlm-roberta-ner</strong>: threshold 0.55</li>
 </ul>
 <table>
   <thead>
@@ -269,14 +283,16 @@
           <tbody>
 <tr><td>gliner</td><td>0.55</td><td>1150</td><td>113</td><td>1268</td><td><a href="gliner/2026-10-30_152652/report.html">Open report</a></td></tr>
 <tr><td>opennlp</td><td>0.3</td><td>45</td><td>17</td><td>62</td><td><a href="opennlp/2026-10-30_143532/report.html">Open report</a></td></tr>
+<tr><td>xlm-roberta-ner</td><td>0.55</td><td>51</td><td>19</td><td>70</td><td><a href="xlm-roberta-ner/2026-11-02_115201/report.html">Open report</a></td></tr>
   </tbody>
 </table>
 </section>
 <section class="panel" data-panel="feedback-2026-10-29::gliner-0.4-opennlp-0.2" data-dataset="feedback-2026-10-29" role="tabpanel">
-<p class="note">GLiNER 0.4; OpenNLP 0.2.</p>
+<p class="note">GLiNER 0.4; OpenNLP 0.2; XLM-RoBERTa 0.4.</p>
 <ul class="thresholds">
 <li><strong>gliner</strong>: threshold 0.4</li>
 <li><strong>opennlp</strong>: threshold 0.2</li>
+<li><strong>xlm-roberta-ner</strong>: threshold 0.4</li>
 </ul>
 <table>
   <thead>
@@ -292,14 +308,16 @@
           <tbody>
 <tr><td>gliner</td><td>0.4</td><td>1504</td><td>223</td><td>1732</td><td><a href="gliner/2026-10-30_144034/report.html">Open report</a></td></tr>
 <tr><td>opennlp</td><td>0.2</td><td>45</td><td>17</td><td>62</td><td><a href="opennlp/2026-10-30_144040/report.html">Open report</a></td></tr>
+<tr><td>xlm-roberta-ner</td><td>0.4</td><td>54</td><td>19</td><td>73</td><td><a href="xlm-roberta-ner/2026-11-02_115205/report.html">Open report</a></td></tr>
   </tbody>
 </table>
 </section>
-<section class="panel active" data-panel="feedback-2026-10-29::gliner-0.9-opennlp-0.1" data-dataset="feedback-2026-10-29" role="tabpanel">
-<p class="note">GLiNER 0.9; OpenNLP 0.1.</p>
+<section class="panel" data-panel="feedback-2026-10-29::gliner-0.9-opennlp-0.1" data-dataset="feedback-2026-10-29" role="tabpanel">
+<p class="note">GLiNER 0.9; OpenNLP 0.1; XLM-RoBERTa 0.9.</p>
 <ul class="thresholds">
 <li><strong>gliner</strong>: threshold 0.9</li>
 <li><strong>opennlp</strong>: threshold 0.1</li>
+<li><strong>xlm-roberta-ner</strong>: threshold 0.9</li>
 </ul>
 <table>
   <thead>
@@ -315,36 +333,125 @@
           <tbody>
 <tr><td>gliner</td><td>0.9</td><td>364</td><td>6</td><td>371</td><td><a href="gliner/2026-10-30_155249/report.html">Open report</a></td></tr>
 <tr><td>opennlp</td><td>0.1</td><td>45</td><td>17</td><td>62</td><td><a href="opennlp/2026-10-30_155254/report.html">Open report</a></td></tr>
+<tr><td>xlm-roberta-ner</td><td>0.9</td><td>40</td><td>13</td><td>53</td><td><a href="xlm-roberta-ner/2026-11-02_115210/report.html">Open report</a></td></tr>
+  </tbody>
+</table>
+</section>
+<section class="panel" data-panel="feedback-2026-10-29::gliner-0.95-opennlp-0" data-dataset="feedback-2026-10-29" role="tabpanel">
+<p class="note">GLiNER 0.95; OpenNLP 0; XLM-RoBERTa 0.95.</p>
+<ul class="thresholds">
+<li><strong>gliner</strong>: threshold 0.95</li>
+<li><strong>opennlp</strong>: threshold 0</li>
+<li><strong>xlm-roberta-ner</strong>: threshold 0.95</li>
+</ul>
+<table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Threshold</th>
+      <th>EN redactions made</th>
+              <th>FR redactions made</th>
+              <th>Total redactions made</th>
+              <th>Detailed report</th>
+            </tr>
+          </thead>
+          <tbody>
+<tr><td>gliner</td><td>0.95</td><td>176</td><td>2</td><td>178</td><td><a href="gliner/2026-11-02_101753/report.html">Open report</a></td></tr>
+<tr><td>opennlp</td><td>0</td><td>45</td><td>17</td><td>62</td><td><a href="opennlp/2026-11-02_101758/report.html">Open report</a></td></tr>
+<tr><td>xlm-roberta-ner</td><td>0.95</td><td>36</td><td>11</td><td>47</td><td><a href="xlm-roberta-ner/2026-11-02_115214/report.html">Open report</a></td></tr>
+  </tbody>
+</table>
+</section>
+<section class="panel" data-panel="feedback-2026-10-29::gliner-0.975-opennlp-0" data-dataset="feedback-2026-10-29" role="tabpanel">
+<p class="note">GLiNER 0.975; OpenNLP 0; XLM-RoBERTa 0.975.</p>
+<ul class="thresholds">
+<li><strong>gliner</strong>: threshold 0.975</li>
+<li><strong>opennlp</strong>: threshold 0</li>
+<li><strong>xlm-roberta-ner</strong>: threshold 0.975</li>
+</ul>
+<table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Threshold</th>
+      <th>EN redactions made</th>
+              <th>FR redactions made</th>
+              <th>Total redactions made</th>
+              <th>Detailed report</th>
+            </tr>
+          </thead>
+          <tbody>
+<tr><td>gliner</td><td>0.975</td><td>47</td><td>1</td><td>48</td><td><a href="gliner/2026-11-02_103534/report.html">Open report</a></td></tr>
+<tr><td>opennlp</td><td>0</td><td>45</td><td>17</td><td>62</td><td><a href="opennlp/2026-11-02_103538/report.html">Open report</a></td></tr>
+<tr><td>xlm-roberta-ner</td><td>0.975</td><td>30</td><td>10</td><td>40</td><td><a href="xlm-roberta-ner/2026-11-02_115219/report.html">Open report</a></td></tr>
   </tbody>
 </table>
 </section>
 </section>
   <script>
+    var STORAGE_KEY = 'evalComparisonSelection';
+    function saveSelection(datasetId, runId) {
+      try {
+        sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ datasetId: datasetId, runId: runId }));
+      } catch (e) {}
+    }
+    function loadSelection() {
+      try {
+        return JSON.parse(sessionStorage.getItem(STORAGE_KEY) || 'null');
+      } catch (e) {
+        return null;
+      }
+    }
+    function activateDataset(id) {
+      document.querySelectorAll('.dataset-tab').forEach(function (t) {
+        var on = t.getAttribute('data-dataset') === id;
+        t.classList.toggle('active', on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      document.querySelectorAll('.dataset-panel').forEach(function (panel) {
+        panel.classList.toggle('active', panel.getAttribute('data-dataset-panel') === id);
+      });
+    }
+    function activateRun(dataset, id) {
+      document.querySelectorAll('.tab[data-dataset="' + dataset + '"]').forEach(function (t) {
+        var on = t.getAttribute('data-tab') === id;
+        t.classList.toggle('active', on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      document.querySelectorAll('.panel[data-dataset="' + dataset + '"]').forEach(function (panel) {
+        panel.classList.toggle('active', panel.getAttribute('data-panel') === id);
+      });
+    }
     document.querySelectorAll('.dataset-tab').forEach(function (tab) {
       tab.addEventListener('click', function () {
         var id = tab.getAttribute('data-dataset');
-        document.querySelectorAll('.dataset-tab').forEach(function (t) {
-          t.classList.toggle('active', t === tab);
-          t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
-        });
-        document.querySelectorAll('.dataset-panel').forEach(function (panel) {
-          panel.classList.toggle('active', panel.getAttribute('data-dataset-panel') === id);
-        });
+        activateDataset(id);
+        var activeRun = document.querySelector('.tab.active[data-dataset="' + id + '"]');
+        saveSelection(id, activeRun ? activeRun.getAttribute('data-tab') : null);
       });
     });
     document.querySelectorAll('.tab').forEach(function (tab) {
       tab.addEventListener('click', function () {
         var id = tab.getAttribute('data-tab');
         var dataset = tab.getAttribute('data-dataset');
-        document.querySelectorAll('.tab[data-dataset="' + dataset + '"]').forEach(function (t) {
-          t.classList.toggle('active', t === tab);
-          t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
-        });
-        document.querySelectorAll('.panel[data-dataset="' + dataset + '"]').forEach(function (panel) {
-          panel.classList.toggle('active', panel.getAttribute('data-panel') === id);
-        });
+        activateRun(dataset, id);
+        saveSelection(dataset, id);
       });
     });
+    var saved = loadSelection();
+    if (saved && saved.datasetId) {
+      activateDataset(saved.datasetId);
+      if (saved.runId) activateRun(saved.datasetId, saved.runId);
+    } else {
+      var activeDataset = document.querySelector('.dataset-tab.active');
+      var activeRun = document.querySelector('.tab.active');
+      if (activeDataset) {
+        saveSelection(
+          activeDataset.getAttribute('data-dataset'),
+          activeRun ? activeRun.getAttribute('data-tab') : null
+        );
+      }
+    }
   </script>
 </body>
 </html>

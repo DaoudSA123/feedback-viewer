@@ -1,0 +1,32 @@
+NAME REDACTION EVALUATION SUMMARY
+=================================
+Model nickname: xlm-roberta-ner
+Run timestamp: 2026-11-02_124047
+Guess source: External predictions file: xlm-roberta-ner-t0.55.jsonl
+
+What was scored
+- All 1260 labeled comments (dev/test split IGNORED)
+- Main F1 uses 1244 comments (excludes 16 policy_decision rows)
+- Matching rule: trim whitespace, then gold is found if predictions cover all its letters (split spans OK; spaces/punctuation in the gold name ignored)
+- Model prediction failures recorded (not dropped): 0
+
+ENGLISH
+  comments=798  gold_names=795  predicted_names=815
+  true_positives=565  false_positives=115  false_negatives=230
+  precision=0.8589  recall=0.7107  F1=0.7778
+  hard_negative_comments=31  hard_negative_correct=28  hard_negative_accuracy=0.9032
+
+FRENCH
+  comments=446  gold_names=444  predicted_names=420
+  true_positives=296  false_positives=60  false_negatives=148
+  precision=0.8571  recall=0.6667  F1=0.7500
+  hard_negative_comments=17  hard_negative_correct=15  hard_negative_accuracy=0.8824
+
+COMBINED
+  comments=1244  gold_names=1239  predicted_names=1235
+  true_positives=861  false_positives=175  false_negatives=378
+  precision=0.8583  recall=0.6949  F1=0.7680
+  hard_negative_comments=48  hard_negative_correct=43  hard_negative_accuracy=0.8958
+
+POLICY_DECISION (not in main F1)
+  comments=16  predicted_spans=17  gold_spans=16

@@ -1,0 +1,37 @@
+[
+  {
+    "run_id": "threshold-0.7",
+    "threshold": 0.7,
+    "pred": "/Users/daoud.aslan/Documents/GitHub/feedback-viewer/eval-data/predictions/sample2/xlm-roberta-ner-t0.7.jsonl"
+  },
+  {
+    "run_id": "gliner-0.6-opennlp-0.5",
+    "threshold": 0.6,
+    "pred": "/Users/daoud.aslan/Documents/GitHub/feedback-viewer/eval-data/predictions/sample2/xlm-roberta-ner-t0.6.jsonl"
+  },
+  {
+    "run_id": "gliner-0.55-opennlp-0.3",
+    "threshold": 0.55,
+    "pred": "/Users/daoud.aslan/Documents/GitHub/feedback-viewer/eval-data/predictions/sample2/xlm-roberta-ner-t0.55.jsonl"
+  },
+  {
+    "run_id": "gliner-0.4-opennlp-0.2",
+    "threshold": 0.4,
+    "pred": "/Users/daoud.aslan/Documents/GitHub/feedback-viewer/eval-data/predictions/sample2/xlm-roberta-ner-t0.4.jsonl"
+  },
+  {
+    "run_id": "gliner-0.9-opennlp-0.1",
+    "threshold": 0.9,
+    "pred": "/Users/daoud.aslan/Documents/GitHub/feedback-viewer/eval-data/predictions/sample2/xlm-roberta-ner-t0.9.jsonl"
+  },
+  {
+    "run_id": "gliner-0.95-opennlp-0",
+    "threshold": 0.95,
+    "pred": "/Users/daoud.aslan/Documents/GitHub/feedback-viewer/eval-data/predictions/sample2/xlm-roberta-ner-t0.95.jsonl"
+  },
+  {
+    "run_id": "gliner-0.975-opennlp-0",
+    "threshold": 0.975,
+    "pred": "/Users/daoud.aslan/Documents/GitHub/feedback-viewer/eval-data/predictions/sample2/xlm-roberta-ner-t0.975.jsonl"
+  }
+]

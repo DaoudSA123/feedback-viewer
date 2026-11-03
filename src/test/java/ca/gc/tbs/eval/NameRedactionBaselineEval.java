@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import opennlp.tools.namefind.NameFinderME;
 import opennlp.tools.namefind.TokenNameFinderModel;
@@ -40,6 +41,8 @@ public class NameRedactionBaselineEval {
 
   private static final ObjectMapper MAPPER = new ObjectMapper();
   private static final DateTimeFormatter TS = DateTimeFormatter.ofPattern("yyyy-MM-dd_HHmmss");
+  /** Word-boundary matcher for curated common EN/FR given names (report filter). */
+  private static final Pattern COMMON_GIVEN_NAME_PATTERN = loadCommonGivenNamePattern();
 
   /** Drop OpenNLP person spans whose confidence is below this cutoff. */
   private static double openNlpConfidenceThreshold = 0.0;
@@ -439,29 +442,55 @@ public class NameRedactionBaselineEval {
         throw new IllegalArgumentException(
             "Invalid predicted span offsets " + span.start + ":" + span.end);
       }
-      String slice = comment.text.substring(span.start, span.end);
-      predicted.add(new CharSpan(span.start, span.end, slice));
+      CharSpan trimmed = trimSpanWhitespace(comment.text, span.start, span.end);
+      if (trimmed != null) {
+        predicted.add(trimmed);
+      }
     }
 
-    Set<String> goldKeys =
-        comment.gold.stream().map(CharSpan::key).collect(Collectors.toCollection(HashSet::new));
-    Set<String> predKeys =
-        predicted.stream().map(CharSpan::key).collect(Collectors.toCollection(HashSet::new));
+    List<CharSpan> goldNormalized = new ArrayList<>();
+    for (CharSpan gold : comment.gold) {
+      CharSpan trimmed = trimSpanWhitespace(comment.text, gold.start, gold.end);
+      goldNormalized.add(trimmed != null ? trimmed : gold);
+    }
+
+    // Coverage match: a gold name is found if every letter is covered by one or more overlapping
+    // predictions (so "A|yaan" covers "Ayaan", and "Wright"+"Jacob" covers "Wright, Jacob").
+    // Predictions that help cover a matched gold are not counted as FPs.
+    boolean[] goldMatched = new boolean[goldNormalized.size()];
+    boolean[] predUsed = new boolean[predicted.size()];
+    for (int gi = 0; gi < goldNormalized.size(); gi++) {
+      CharSpan gold = goldNormalized.get(gi);
+      List<Integer> overlapping = new ArrayList<>();
+      for (int pi = 0; pi < predicted.size(); pi++) {
+        if (rangesOverlap(gold, predicted.get(pi))) {
+          overlapping.add(pi);
+        }
+      }
+      if (overlapping.isEmpty()) {
+        continue;
+      }
+      if (nonWhitespaceCovered(comment.text, gold, overlapping, predicted)) {
+        goldMatched[gi] = true;
+        for (int pi : overlapping) {
+          predUsed[pi] = true;
+        }
+      }
+    }
 
     List<CharSpan> truePositives = new ArrayList<>();
     List<CharSpan> falseNegatives = new ArrayList<>();
     List<CharSpan> falsePositives = new ArrayList<>();
-
-    for (CharSpan gold : comment.gold) {
-      if (predKeys.contains(gold.key())) {
-        truePositives.add(gold);
+    for (int gi = 0; gi < goldNormalized.size(); gi++) {
+      if (goldMatched[gi]) {
+        truePositives.add(goldNormalized.get(gi));
       } else {
-        falseNegatives.add(gold);
+        falseNegatives.add(goldNormalized.get(gi));
       }
     }
-    for (CharSpan pred : predicted) {
-      if (!goldKeys.contains(pred.key())) {
-        falsePositives.add(pred);
+    for (int pi = 0; pi < predicted.size(); pi++) {
+      if (!predUsed[pi]) {
+        falsePositives.add(predicted.get(pi));
       }
     }
 
@@ -478,6 +507,35 @@ public class NameRedactionBaselineEval {
 
     return new CommentResult(
         comment, predicted, truePositives, falsePositives, falseNegatives, errorType, null);
+  }
+
+  private static boolean rangesOverlap(CharSpan a, CharSpan b) {
+    return a.start < b.end && b.start < a.end;
+  }
+
+  /**
+   * True if every letter in {@code gold} is inside at least one covering pred. Ignores spaces and
+   * punctuation so {@code Wright}+{@code Jacob} covers {@code Wright, Jacob}.
+   */
+  private static boolean nonWhitespaceCovered(
+      String text, CharSpan gold, List<Integer> predIndexes, List<CharSpan> predicted) {
+    for (int i = gold.start; i < gold.end; i++) {
+      if (!Character.isLetter(text.charAt(i))) {
+        continue;
+      }
+      boolean covered = false;
+      for (int pi : predIndexes) {
+        CharSpan pred = predicted.get(pi);
+        if (i >= pred.start && i < pred.end) {
+          covered = true;
+          break;
+        }
+      }
+      if (!covered) {
+        return false;
+      }
+    }
+    return true;
   }
 
   private static String buildSummaryText(
@@ -504,7 +562,9 @@ public class NameRedactionBaselineEval {
         .append(" comments (excludes ")
         .append(trust.policyCount)
         .append(" policy_decision rows)\n");
-    sb.append("- Matching rule: exact character start/end must match\n");
+    sb.append(
+        "- Matching rule: trim whitespace, then gold is found if predictions cover all its"
+            + " letters (split spans OK; spaces/punctuation in the gold name ignored)\n");
     sb.append("- Model prediction failures recorded (not dropped): ").append(failures).append('\n');
     sb.append('\n');
     sb.append(formatBucket("ENGLISH", english));
@@ -916,7 +976,6 @@ public class NameRedactionBaselineEval {
         </head>
         <body>
           <h1>Name redaction model comparison</h1>
-          <p>Pick a data sample first, then an experiment run. Only models scored in that run are listed.</p>
           <div class="dataset-tabs" role="tablist" aria-label="Data samples">
         """
             + datasetTabs
@@ -926,31 +985,69 @@ public class NameRedactionBaselineEval {
             + datasetPanels
             + """
           <script>
+            var STORAGE_KEY = 'evalComparisonSelection';
+            function saveSelection(datasetId, runId) {
+              try {
+                sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ datasetId: datasetId, runId: runId }));
+              } catch (e) {}
+            }
+            function loadSelection() {
+              try {
+                return JSON.parse(sessionStorage.getItem(STORAGE_KEY) || 'null');
+              } catch (e) {
+                return null;
+              }
+            }
+            function activateDataset(id) {
+              document.querySelectorAll('.dataset-tab').forEach(function (t) {
+                var on = t.getAttribute('data-dataset') === id;
+                t.classList.toggle('active', on);
+                t.setAttribute('aria-selected', on ? 'true' : 'false');
+              });
+              document.querySelectorAll('.dataset-panel').forEach(function (panel) {
+                panel.classList.toggle('active', panel.getAttribute('data-dataset-panel') === id);
+              });
+            }
+            function activateRun(dataset, id) {
+              document.querySelectorAll('.tab[data-dataset=\"' + dataset + '\"]').forEach(function (t) {
+                var on = t.getAttribute('data-tab') === id;
+                t.classList.toggle('active', on);
+                t.setAttribute('aria-selected', on ? 'true' : 'false');
+              });
+              document.querySelectorAll('.panel[data-dataset=\"' + dataset + '\"]').forEach(function (panel) {
+                panel.classList.toggle('active', panel.getAttribute('data-panel') === id);
+              });
+            }
             document.querySelectorAll('.dataset-tab').forEach(function (tab) {
               tab.addEventListener('click', function () {
                 var id = tab.getAttribute('data-dataset');
-                document.querySelectorAll('.dataset-tab').forEach(function (t) {
-                  t.classList.toggle('active', t === tab);
-                  t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
-                });
-                document.querySelectorAll('.dataset-panel').forEach(function (panel) {
-                  panel.classList.toggle('active', panel.getAttribute('data-dataset-panel') === id);
-                });
+                activateDataset(id);
+                var activeRun = document.querySelector('.tab.active[data-dataset=\"' + id + '\"]');
+                saveSelection(id, activeRun ? activeRun.getAttribute('data-tab') : null);
               });
             });
             document.querySelectorAll('.tab').forEach(function (tab) {
               tab.addEventListener('click', function () {
                 var id = tab.getAttribute('data-tab');
                 var dataset = tab.getAttribute('data-dataset');
-                document.querySelectorAll('.tab[data-dataset=\"' + dataset + '\"]').forEach(function (t) {
-                  t.classList.toggle('active', t === tab);
-                  t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
-                });
-                document.querySelectorAll('.panel[data-dataset=\"' + dataset + '\"]').forEach(function (panel) {
-                  panel.classList.toggle('active', panel.getAttribute('data-panel') === id);
-                });
+                activateRun(dataset, id);
+                saveSelection(dataset, id);
               });
             });
+            var saved = loadSelection();
+            if (saved && saved.datasetId) {
+              activateDataset(saved.datasetId);
+              if (saved.runId) activateRun(saved.datasetId, saved.runId);
+            } else {
+              var activeDataset = document.querySelector('.dataset-tab.active');
+              var activeRun = document.querySelector('.tab.active');
+              if (activeDataset) {
+                saveSelection(
+                  activeDataset.getAttribute('data-dataset'),
+                  activeRun ? activeRun.getAttribute('data-tab') : null
+                );
+              }
+            }
           </script>
         </body>
         </html>
@@ -1073,9 +1170,9 @@ public class NameRedactionBaselineEval {
           .append("</tr>\n");
     }
 
-    String enHeader = unlabeled ? "EN names found" : "English F1";
-    String frHeader = unlabeled ? "FR names found" : "French F1";
-    String allHeader = unlabeled ? "Total names found" : "Combined F1";
+    String enHeader = unlabeled ? "EN redactions made" : "English F1";
+    String frHeader = unlabeled ? "FR redactions made" : "French F1";
+    String allHeader = unlabeled ? "Total redactions made" : "Combined F1";
     return """
         <table>
           <thead>
@@ -1173,10 +1270,17 @@ public class NameRedactionBaselineEval {
       List<CommentResult> results,
       int failures)
       throws IOException {
+    if (unlabeledMode) {
+      writeUnlabeledReportHtml(path, modelId, results);
+      return;
+    }
+
     StringBuilder rows = new StringBuilder();
     List<CommentResult> sorted =
         results.stream().sorted(Comparator.comparing((CommentResult r) -> r.comment.id)).toList();
     for (CommentResult r : sorted) {
+      boolean hasPrediction = r.predicted != null && !r.predicted.isEmpty();
+      boolean hasCommonName = containsCommonGivenName(r.comment.text);
       rows.append("<tr")
           .append(" data-lang=\"")
           .append(esc(r.comment.language))
@@ -1186,6 +1290,12 @@ public class NameRedactionBaselineEval {
           .append("\"")
           .append(" data-error=\"")
           .append(esc(r.errorType))
+          .append("\"")
+          .append(" data-has-prediction=\"")
+          .append(hasPrediction ? "1" : "0")
+          .append("\"")
+          .append(" data-has-common-name=\"")
+          .append(hasCommonName ? "1" : "0")
           .append("\">");
       rows.append("<td>").append(esc(r.comment.id)).append("</td>");
       rows.append("<td>").append(esc(r.comment.language)).append("</td>");
@@ -1225,6 +1335,7 @@ public class NameRedactionBaselineEval {
             .counts th, .counts td { border-bottom:1px solid #efd7a0; padding:.45rem .4rem; text-align:left; }
             .filters { display:flex; flex-wrap:wrap; gap:.75rem; margin:1rem 0 1.25rem; align-items:end; }
             label { display:flex; flex-direction:column; gap:.3rem; font-size:.9rem; }
+            label.check { flex-direction:row; align-items:center; gap:.45rem; padding-bottom:.2rem; }
             select { min-width: 10rem; padding:.45rem .55rem; border-radius:8px; border:1px solid var(--line); background:white; }
             table { width:100%; border-collapse:collapse; background:var(--card); }
             th, td { border-bottom:1px solid var(--line); padding:.55rem .6rem; vertical-align:top; font-size:.92rem; }
@@ -1234,11 +1345,14 @@ public class NameRedactionBaselineEval {
             .count { margin:.5rem 0 1rem; }
             .back { display:inline-block; margin:0 0 1rem; padding:.45rem .8rem; border:1px solid var(--line); border-radius:8px; background:#fffdf8; color:var(--ink); text-decoration:none; font-family:"Avenir Next","Segoe UI",sans-serif; font-size:.95rem; }
             .back:hover { background:#efe6d4; }
+            .to-top { position:fixed; right:1.25rem; bottom:1.25rem; z-index:20; display:none; padding:.55rem .85rem; border:1px solid var(--line); border-radius:8px; background:#fffdf8; color:var(--ink); text-decoration:none; font-family:"Avenir Next","Segoe UI",sans-serif; font-size:.95rem; box-shadow:0 6px 18px rgba(40,25,0,.12); }
+            .to-top:hover { background:#efe6d4; }
+            .to-top.visible { display:inline-block; }
           </style>
         </head>
         <body>
           <main>
-            <a class="back" href="../../index.html">← Back to comparison</a>
+            <a class="back" id="backLink" href="../../index.html">← Back to comparison</a>
             <h1>Name redaction evaluation</h1>
             <p class="muted">Model: <strong>__MODEL__</strong></p>
 
@@ -1364,6 +1478,8 @@ public class NameRedactionBaselineEval {
                   <option value="model_failure">model_failure</option>
                 </select>
               </label>
+              <label class="check"><input type="checkbox" id="detectedFilter"/> Show only comments with detected names</label>
+              <label class="check"><input type="checkbox" id="commonNameFilter"/> Show only comments matching common given names</label>
             </div>
             <p class="count" id="visibleCount"></p>
             <table>
@@ -1378,10 +1494,13 @@ public class NameRedactionBaselineEval {
               </tbody>
             </table>
           </main>
+          <a class="to-top" id="toTop" href="#">↑ Top</a>
           <script>
             const langFilter = document.getElementById('langFilter');
             const redactFilter = document.getElementById('redactFilter');
             const errorFilter = document.getElementById('errorFilter');
+            const detectedFilter = document.getElementById('detectedFilter');
+            const commonNameFilter = document.getElementById('commonNameFilter');
             const rows = [...document.querySelectorAll('#rows tr')];
             const visibleCount = document.getElementById('visibleCount');
             function applyFilters() {
@@ -1390,14 +1509,29 @@ public class NameRedactionBaselineEval {
                 const okLang = langFilter.value === 'all' || row.dataset.lang === langFilter.value;
                 const okRedact = redactFilter.value === 'all' || row.dataset.redact === redactFilter.value;
                 const okError = errorFilter.value === 'all' || row.dataset.error === errorFilter.value;
-                const show = okLang && okRedact && okError;
+                const okDetected = !detectedFilter.checked || row.dataset.hasPrediction === '1';
+                const okCommon = !commonNameFilter.checked || row.dataset.hasCommonName === '1';
+                const show = okLang && okRedact && okError && okDetected && okCommon;
                 row.style.display = show ? '' : 'none';
                 if (show) shown++;
               });
               visibleCount.textContent = 'Showing ' + shown + ' of ' + rows.length + ' comments';
             }
-            [langFilter, redactFilter, errorFilter].forEach(el => el.addEventListener('change', applyFilters));
+            [langFilter, redactFilter, errorFilter, detectedFilter, commonNameFilter].forEach(el => el.addEventListener('change', applyFilters));
             applyFilters();
+            const backLink = document.getElementById('backLink');
+            backLink.addEventListener('click', (e) => {
+              e.preventDefault();
+              history.back();
+            });
+            const toTop = document.getElementById('toTop');
+            toTop.addEventListener('click', (e) => {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            window.addEventListener('scroll', () => {
+              toTop.classList.toggle('visible', window.scrollY > 400);
+            }, { passive: true });
           </script>
         </body>
         </html>
@@ -1444,6 +1578,161 @@ public class NameRedactionBaselineEval {
     Files.writeString(path, html, StandardCharsets.UTF_8);
   }
 
+  /**
+   * Sample 2 / unlabeled reports: detections + redacted text only. No gold F1 UI,
+   * shouldRedact/Error/Correct names columns, or trust checks.
+   */
+  private static void writeUnlabeledReportHtml(
+      Path path, String modelId, List<CommentResult> results) throws IOException {
+    StringBuilder rows = new StringBuilder();
+    List<CommentResult> sorted =
+        results.stream().sorted(Comparator.comparing((CommentResult r) -> r.comment.id)).toList();
+    for (CommentResult r : sorted) {
+      boolean hasPrediction = r.predicted != null && !r.predicted.isEmpty();
+      boolean hasCommonName = containsCommonGivenName(r.comment.text);
+      rows.append("<tr data-lang=\"")
+          .append(esc(r.comment.language))
+          .append("\" data-has-prediction=\"")
+          .append(hasPrediction ? "1" : "0")
+          .append("\" data-has-common-name=\"")
+          .append(hasCommonName ? "1" : "0")
+          .append("\">");
+      rows.append("<td>").append(esc(r.comment.id)).append("</td>");
+      rows.append("<td>").append(esc(r.comment.language)).append("</td>");
+      rows.append("<td>").append(esc(joinSpans(r.predicted))).append("</td>");
+      rows.append("<td class=\"comment\">").append(esc(r.comment.text)).append("</td>");
+      rows.append("<td class=\"comment\">")
+          .append(esc(redactPredictedSpans(r.comment.text, r.predicted)))
+          .append("</td>");
+      rows.append("</tr>\n");
+    }
+    String html =
+        """
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="utf-8"/>
+          <title>Name redaction report</title>
+          <style>
+            :root { --bg:#f4efe6; --card:#fffdf8; --ink:#1d1a16; --line:#d7cdb8; }
+            body { margin:0; font-family: "Iowan Old Style", "Palatino Linotype", Palatino, serif; color:var(--ink); background:
+              radial-gradient(circle at top left, #f8f1df, transparent 40%),
+              linear-gradient(180deg, #efe7d8, var(--bg)); }
+            main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+            h1,h2 { font-family: "Avenir Next", "Segoe UI", sans-serif; letter-spacing: -0.02em; }
+            .filters { display:flex; flex-wrap:wrap; gap:.75rem; margin:1rem 0 1.25rem; align-items:end; }
+            label { display:flex; flex-direction:column; gap:.3rem; font-size:.9rem; }
+            label.check { flex-direction:row; align-items:center; gap:.45rem; padding-bottom:.2rem; }
+            select { min-width: 10rem; padding:.45rem .55rem; border-radius:8px; border:1px solid var(--line); background:white; }
+            table { width:100%; border-collapse:collapse; background:var(--card); }
+            th, td { border-bottom:1px solid var(--line); padding:.55rem .6rem; vertical-align:top; font-size:.92rem; }
+            th { position:sticky; top:0; background:#efe6d4; text-align:left; }
+            td.comment { max-width: 28rem; }
+            .muted { color:#5d564b; }
+            .count { margin:.5rem 0 1rem; }
+            .back { display:inline-block; margin:0 0 1rem; padding:.45rem .8rem; border:1px solid var(--line); border-radius:8px; background:#fffdf8; color:var(--ink); text-decoration:none; font-family:"Avenir Next","Segoe UI",sans-serif; font-size:.95rem; }
+            .back:hover { background:#efe6d4; }
+            .to-top { position:fixed; right:1.25rem; bottom:1.25rem; z-index:20; display:none; padding:.55rem .85rem; border:1px solid var(--line); border-radius:8px; background:#fffdf8; color:var(--ink); text-decoration:none; font-family:"Avenir Next","Segoe UI",sans-serif; font-size:.95rem; box-shadow:0 6px 18px rgba(40,25,0,.12); }
+            .to-top:hover { background:#efe6d4; }
+            .to-top.visible { display:inline-block; }
+          </style>
+        </head>
+        <body>
+          <main>
+            <a class="back" id="backLink" href="../../index.html">← Back to comparison</a>
+            <h1>Name redaction preview</h1>
+            <p class="muted">Model: <strong>__MODEL__</strong></p>
+            <h2>Every comment</h2>
+            <div class="filters">
+              <label>Language
+                <select id="langFilter">
+                  <option value="all">All</option>
+                  <option value="en">English</option>
+                  <option value="fr">French</option>
+                </select>
+              </label>
+              <label class="check"><input type="checkbox" id="detectedFilter"/> Show only comments with detected names</label>
+              <label class="check"><input type="checkbox" id="commonNameFilter"/> Show only comments matching common given names</label>
+            </div>
+            <p class="count" id="visibleCount"></p>
+            <table>
+              <thead>
+                <tr><th>ID</th><th>Lang</th><th>Model guesses</th><th>Comment</th><th>Redacted comment</th></tr>
+              </thead>
+              <tbody id="rows">__ROWS__</tbody>
+            </table>
+          </main>
+          <a class="to-top" id="toTop" href="#">↑ Top</a>
+          <script>
+            const langFilter = document.getElementById('langFilter');
+            const detectedFilter = document.getElementById('detectedFilter');
+            const commonNameFilter = document.getElementById('commonNameFilter');
+            const rows = [...document.querySelectorAll('#rows tr')];
+            const visibleCount = document.getElementById('visibleCount');
+            function applyFilters() {
+              let shown = 0;
+              rows.forEach(row => {
+                const okLang = langFilter.value === 'all' || row.dataset.lang === langFilter.value;
+                const okDetected = !detectedFilter.checked || row.dataset.hasPrediction === '1';
+                const okCommon = !commonNameFilter.checked || row.dataset.hasCommonName === '1';
+                const show = okLang && okDetected && okCommon;
+                row.style.display = show ? '' : 'none';
+                if (show) shown++;
+              });
+              visibleCount.textContent = 'Showing ' + shown + ' of ' + rows.length + ' comments';
+            }
+            [langFilter, detectedFilter, commonNameFilter].forEach(el => el.addEventListener('change', applyFilters));
+            applyFilters();
+            const backLink = document.getElementById('backLink');
+            backLink.addEventListener('click', (e) => {
+              e.preventDefault();
+              history.back();
+            });
+            const toTop = document.getElementById('toTop');
+            toTop.addEventListener('click', (e) => {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            window.addEventListener('scroll', () => {
+              toTop.classList.toggle('visible', window.scrollY > 400);
+            }, { passive: true });
+          </script>
+        </body>
+        </html>
+        """
+            .replace("__MODEL__", esc(modelId))
+            .replace("__ROWS__", rows.toString());
+    Files.writeString(path, html, StandardCharsets.UTF_8);
+  }
+
+  private static boolean containsCommonGivenName(String text) {
+    return text != null && !text.isBlank() && COMMON_GIVEN_NAME_PATTERN.matcher(text).find();
+  }
+
+  private static Pattern loadCommonGivenNamePattern() {
+    try (InputStream in =
+        NameRedactionBaselineEval.class.getResourceAsStream("/eval/common-given-names.txt")) {
+      if (in == null) {
+        throw new IllegalStateException("Missing classpath resource /eval/common-given-names.txt");
+      }
+      List<String> names =
+          new String(in.readAllBytes(), StandardCharsets.UTF_8)
+              .lines()
+              .map(String::trim)
+              .filter(s -> !s.isEmpty() && !s.startsWith("#"))
+              .sorted(Comparator.comparingInt(String::length).reversed())
+              .toList();
+      if (names.isEmpty()) {
+        throw new IllegalStateException("common-given-names.txt is empty");
+      }
+      String alternation =
+          names.stream().map(Pattern::quote).collect(Collectors.joining("|"));
+      return Pattern.compile("(?<!\\p{L})(?:" + alternation + ")(?!\\p{L})", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+    } catch (IOException e) {
+      throw new IllegalStateException("Failed to load common-given-names.txt", e);
+    }
+  }
+
   private static String fmt(double value) {
     return String.format(Locale.ROOT, "%.4f", value);
   }
@@ -1457,6 +1746,26 @@ public class NameRedactionBaselineEval {
         .replace("<", "&lt;")
         .replace(">", "&gt;")
         .replace("\"", "&quot;");
+  }
+
+  /**
+   * Shrink a span so it does not include leading/trailing whitespace. Returns null if the span is
+   * empty after trimming. Fixes common NER off-by-one cases (e.g. {@code " Cindy"} vs {@code
+   * "Cindy"}).
+   */
+  private static CharSpan trimSpanWhitespace(String text, int start, int end) {
+    int lo = start;
+    int hi = end;
+    while (lo < hi && Character.isWhitespace(text.charAt(lo))) {
+      lo++;
+    }
+    while (hi > lo && Character.isWhitespace(text.charAt(hi - 1))) {
+      hi--;
+    }
+    if (lo >= hi) {
+      return null;
+    }
+    return new CharSpan(lo, hi, text.substring(lo, hi));
   }
 
   private record CharSpan(int start, int end, String text) {
@@ -1549,11 +1858,17 @@ public class NameRedactionBaselineEval {
     }
 
     double precision() {
-      int denom = truePositives + falsePositives;
-      return denom == 0 ? 0.0 : (double) truePositives / denom;
+      // Under coverage matching, precision is "used predictions / all predictions"
+      // (a prediction that helps cover a gold name is used, even if several preds cover one gold).
+      if (predictedSpans == 0) {
+        return 0.0;
+      }
+      int usedPredictions = predictedSpans - falsePositives;
+      return (double) usedPredictions / predictedSpans;
     }
 
     double recall() {
+      // Recall stays gold-based: matched gold names / all gold names.
       int denom = truePositives + falseNegatives;
       return denom == 0 ? 0.0 : (double) truePositives / denom;
     }
@@ -1570,7 +1885,8 @@ public class NameRedactionBaselineEval {
 
     boolean reconciles() {
       return truePositives + falseNegatives == goldSpans
-          && truePositives + falsePositives == predictedSpans;
+          && falsePositives >= 0
+          && falsePositives <= predictedSpans;
     }
   }
 }

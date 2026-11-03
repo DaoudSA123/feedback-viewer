@@ -5,8 +5,13 @@
 #
 # Usage:
 #   ./scripts/run-model-eval.sh gliner
+#   ./scripts/run-model-eval.sh gliner --threshold 0.7
 #   ./scripts/run-model-eval.sh xlm-roberta-ner
+#   ./scripts/run-model-eval.sh xlm-roberta-ner --threshold 0.8
 #   ./scripts/run-model-eval.sh spacy-xx
+#
+# Extra args after the model id are forwarded to scripts/predict_names.py
+# (e.g. --threshold, --data, --out).
 #
 # For the original OpenNLP baseline, use:
 #   ./scripts/run-name-eval.sh opennlp
@@ -18,9 +23,10 @@ cd "$ROOT"
 
 MODEL_ID="${1:-}"
 if [[ -z "${MODEL_ID}" ]]; then
-  echo "Usage: ./scripts/run-model-eval.sh <gliner|xlm-roberta-ner|spacy-xx>"
+  echo "Usage: ./scripts/run-model-eval.sh <gliner|xlm-roberta-ner|spacy-xx> [--threshold N] ..."
   exit 1
 fi
+shift
 
 case "${MODEL_ID}" in
   gliner|xlm-roberta-ner|spacy-xx) ;;
@@ -41,7 +47,7 @@ echo "============================================"
 echo "Project folder: $ROOT"
 echo
 echo "Step A: Creating guesses with Python..."
-python3 scripts/predict_names.py "${MODEL_ID}"
+python3 scripts/predict_names.py "${MODEL_ID}" "$@"
 echo
 echo "Step B: Scoring guesses and writing reports..."
 ./scripts/run-name-eval.sh "${MODEL_ID}"

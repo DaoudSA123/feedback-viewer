@@ -1,14 +1,14 @@
 {
-  "activeDatasetId" : "feedback-2026-10-29",
-  "activeRunId" : "gliner-0.9-opennlp-0.1",
+  "activeDatasetId" : "synthetic-pi",
+  "activeRunId" : "gliner-0.4-opennlp-0.2",
   "datasets" : [ {
     "id" : "synthetic-pi",
     "label" : "Sample 1 — Synthetic PI test",
-    "notes" : "Labeled synthetic name dataset (1,260 comments). Threshold experiments on this sample.",
+    "notes" : "Labeled synthetic name dataset (1,260 comments).",
     "runs" : [ {
       "id" : "original",
       "label" : "Original run",
-      "notes" : "GLiNER threshold 0.5; OpenNLP, XLM-RoBERTa, spaCy: no threshold",
+      "notes" : "GLiNER 0.5; OpenNLP, XLM-RoBERTa, spaCy: no threshold.",
       "thresholds" : {
         "gliner" : "0.5",
         "opennlp" : "none",
@@ -16,64 +16,72 @@
         "spacy-xx" : "none"
       },
       "results" : {
-        "opennlp" : "2026-10-29_133107",
-        "gliner" : "2026-10-29_140229",
-        "xlm-roberta-ner" : "2026-10-29_140433",
-        "spacy-xx" : "2026-10-29_140449"
+        "gliner" : "2026-11-02_122358",
+        "opennlp" : "2026-11-02_122402",
+        "xlm-roberta-ner" : "2026-11-02_122407",
+        "spacy-xx" : "2026-11-02_122412"
       }
     }, {
       "id" : "threshold-0.7",
-      "label" : "Threshold 0.7",
-      "notes" : "GLiNER 0.7; OpenNLP 0.7",
+      "label" : "GLiNER 0.7 / OpenNLP 0.7 / XLM 0.7",
+      "notes" : "GLiNER 0.7; OpenNLP 0.7; XLM-RoBERTa 0.7.",
       "thresholds" : {
         "gliner" : "0.7",
-        "opennlp" : "0.7"
+        "opennlp" : "0.7",
+        "xlm-roberta-ner" : "0.7"
       },
       "results" : {
-        "gliner" : "2026-10-30_114726",
-        "opennlp" : "2026-10-30_114710"
+        "gliner" : "2026-11-02_124009",
+        "opennlp" : "2026-11-02_124013",
+        "xlm-roberta-ner" : "2026-11-02_124019"
       }
     }, {
       "id" : "gliner-0.6-opennlp-0.5",
-      "label" : "GLiNER 0.6 / OpenNLP 0.5",
-      "notes" : "GLiNER 0.6; OpenNLP 0.5",
+      "label" : "GLiNER 0.6 / OpenNLP 0.5 / XLM 0.6",
+      "notes" : "GLiNER 0.6; OpenNLP 0.5; XLM-RoBERTa 0.6.",
       "thresholds" : {
         "gliner" : "0.6",
-        "opennlp" : "0.5"
+        "opennlp" : "0.5",
+        "xlm-roberta-ner" : "0.6"
       },
       "results" : {
-        "gliner" : "2026-10-30_115123",
-        "opennlp" : "2026-10-30_115127"
+        "gliner" : "2026-11-02_124023",
+        "opennlp" : "2026-11-02_124027",
+        "xlm-roberta-ner" : "2026-11-02_124032"
       }
     }, {
       "id" : "gliner-0.55-opennlp-0.3",
-      "label" : "GLiNER 0.55 / OpenNLP 0.3",
-      "notes" : "GLiNER 0.55; OpenNLP 0.3",
+      "label" : "GLiNER 0.55 / OpenNLP 0.3 / XLM 0.55",
+      "notes" : "GLiNER 0.55; OpenNLP 0.3; XLM-RoBERTa 0.55.",
       "thresholds" : {
         "gliner" : "0.55",
-        "opennlp" : "0.3"
+        "opennlp" : "0.3",
+        "xlm-roberta-ner" : "0.55"
       },
       "results" : {
-        "gliner" : "2026-10-30_115720",
-        "opennlp" : "2026-10-30_115724"
+        "gliner" : "2026-11-02_124037",
+        "opennlp" : "2026-11-02_124041",
+        "xlm-roberta-ner" : "2026-11-02_124047"
       }
     }, {
       "id" : "gliner-0.4-opennlp-0.2",
-      "label" : "GLiNER 0.4 / OpenNLP 0.2",
-      "notes" : "GLiNER 0.4; OpenNLP 0.2",
+      "label" : "GLiNER 0.4 / OpenNLP 0.2 / XLM 0.4",
+      "notes" : "GLiNER 0.4; OpenNLP 0.2; XLM-RoBERTa 0.4.",
       "thresholds" : {
         "gliner" : "0.4",
-        "opennlp" : "0.2"
+        "opennlp" : "0.2",
+        "xlm-roberta-ner" : "0.4"
       },
       "results" : {
-        "gliner" : "2026-10-30_130847",
-        "opennlp" : "2026-10-30_130852"
+        "gliner" : "2026-11-02_124051",
+        "opennlp" : "2026-11-02_124055",
+        "xlm-roberta-ner" : "2026-11-02_124100"
       }
     } ]
   }, {
     "id" : "feedback-2026-10-29",
-    "label" : "Sample 2 — feedback_2026-10-29",
-    "notes" : "Real Oct 29 feedback sample (3,319 comments).",
+    "label" : "Sample 2 — feedback",
+    "notes" : "Feedback sample (3,319 comments).",
     "runs" : [ {
       "id" : "original",
       "label" : "Original run",
@@ -92,63 +100,101 @@
       }
     }, {
       "id" : "threshold-0.7",
-      "label" : "Threshold 0.7",
-      "notes" : "GLiNER 0.7; OpenNLP 0.7.",
+      "label" : "GLiNER 0.7 / OpenNLP 0.7 / XLM 0.7",
+      "notes" : "GLiNER 0.7; OpenNLP 0.7; XLM-RoBERTa 0.7.",
       "thresholds" : {
         "gliner" : "0.7",
-        "opennlp" : "0.7"
+        "opennlp" : "0.7",
+        "xlm-roberta-ner" : "0.7"
       },
       "results" : {
         "gliner" : "2026-10-30_152633",
-        "opennlp" : "2026-10-30_152637"
+        "opennlp" : "2026-10-30_152637",
+        "xlm-roberta-ner" : "2026-11-02_115152"
       }
     }, {
       "id" : "gliner-0.6-opennlp-0.5",
-      "label" : "GLiNER 0.6 / OpenNLP 0.5",
-      "notes" : "GLiNER 0.6; OpenNLP 0.5.",
+      "label" : "GLiNER 0.6 / OpenNLP 0.5 / XLM 0.6",
+      "notes" : "GLiNER 0.6; OpenNLP 0.5; XLM-RoBERTa 0.6.",
       "thresholds" : {
         "gliner" : "0.6",
-        "opennlp" : "0.5"
+        "opennlp" : "0.5",
+        "xlm-roberta-ner" : "0.6"
       },
       "results" : {
         "gliner" : "2026-10-30_152643",
-        "opennlp" : "2026-10-30_152647"
+        "opennlp" : "2026-10-30_152647",
+        "xlm-roberta-ner" : "2026-11-02_115157"
       }
     }, {
       "id" : "gliner-0.55-opennlp-0.3",
-      "label" : "GLiNER 0.55 / OpenNLP 0.3",
-      "notes" : "GLiNER 0.55; OpenNLP 0.3.",
+      "label" : "GLiNER 0.55 / OpenNLP 0.3 / XLM 0.55",
+      "notes" : "GLiNER 0.55; OpenNLP 0.3; XLM-RoBERTa 0.55.",
       "thresholds" : {
         "gliner" : "0.55",
-        "opennlp" : "0.3"
+        "opennlp" : "0.3",
+        "xlm-roberta-ner" : "0.55"
       },
       "results" : {
         "gliner" : "2026-10-30_152652",
-        "opennlp" : "2026-10-30_143532"
+        "opennlp" : "2026-10-30_143532",
+        "xlm-roberta-ner" : "2026-11-02_115201"
       }
     }, {
       "id" : "gliner-0.4-opennlp-0.2",
-      "label" : "GLiNER 0.4 / OpenNLP 0.2",
-      "notes" : "GLiNER 0.4; OpenNLP 0.2.",
+      "label" : "GLiNER 0.4 / OpenNLP 0.2 / XLM 0.4",
+      "notes" : "GLiNER 0.4; OpenNLP 0.2; XLM-RoBERTa 0.4.",
       "thresholds" : {
         "gliner" : "0.4",
-        "opennlp" : "0.2"
+        "opennlp" : "0.2",
+        "xlm-roberta-ner" : "0.4"
       },
       "results" : {
         "gliner" : "2026-10-30_144034",
-        "opennlp" : "2026-10-30_144040"
+        "opennlp" : "2026-10-30_144040",
+        "xlm-roberta-ner" : "2026-11-02_115205"
       }
     }, {
       "id" : "gliner-0.9-opennlp-0.1",
-      "label" : "GLiNER 0.9 / OpenNLP 0.1",
-      "notes" : "GLiNER 0.9; OpenNLP 0.1.",
+      "label" : "GLiNER 0.9 / OpenNLP 0.1 / XLM 0.9",
+      "notes" : "GLiNER 0.9; OpenNLP 0.1; XLM-RoBERTa 0.9.",
       "thresholds" : {
         "gliner" : "0.9",
-        "opennlp" : "0.1"
+        "opennlp" : "0.1",
+        "xlm-roberta-ner" : "0.9"
       },
       "results" : {
         "gliner" : "2026-10-30_155249",
-        "opennlp" : "2026-10-30_155254"
+        "opennlp" : "2026-10-30_155254",
+        "xlm-roberta-ner" : "2026-11-02_115210"
+      }
+    }, {
+      "id" : "gliner-0.95-opennlp-0",
+      "label" : "GLiNER 0.95 / OpenNLP 0 / XLM 0.95",
+      "notes" : "GLiNER 0.95; OpenNLP 0; XLM-RoBERTa 0.95.",
+      "thresholds" : {
+        "gliner" : "0.95",
+        "opennlp" : "0",
+        "xlm-roberta-ner" : "0.95"
+      },
+      "results" : {
+        "gliner" : "2026-11-02_101753",
+        "opennlp" : "2026-11-02_101758",
+        "xlm-roberta-ner" : "2026-11-02_115214"
+      }
+    }, {
+      "id" : "gliner-0.975-opennlp-0",
+      "label" : "GLiNER 0.975 / OpenNLP 0 / XLM 0.975",
+      "notes" : "GLiNER 0.975; OpenNLP 0; XLM-RoBERTa 0.975.",
+      "thresholds" : {
+        "gliner" : "0.975",
+        "opennlp" : "0",
+        "xlm-roberta-ner" : "0.975"
+      },
+      "results" : {
+        "gliner" : "2026-11-02_103534",
+        "opennlp" : "2026-11-02_103538",
+        "xlm-roberta-ner" : "2026-11-02_115219"
       }
     } ]
   } ]

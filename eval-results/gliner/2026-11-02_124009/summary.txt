@@ -1,0 +1,32 @@
+NAME REDACTION EVALUATION SUMMARY
+=================================
+Model nickname: gliner
+Run timestamp: 2026-11-02_124009
+Guess source: External predictions file: gliner-t0.7.jsonl
+
+What was scored
+- All 1260 labeled comments (dev/test split IGNORED)
+- Main F1 uses 1244 comments (excludes 16 policy_decision rows)
+- Matching rule: trim whitespace, then gold is found if predictions cover all its letters (split spans OK; spaces/punctuation in the gold name ignored)
+- Model prediction failures recorded (not dropped): 0
+
+ENGLISH
+  comments=798  gold_names=795  predicted_names=790
+  true_positives=712  false_positives=43  false_negatives=83
+  precision=0.9456  recall=0.8956  F1=0.9199
+  hard_negative_comments=31  hard_negative_correct=24  hard_negative_accuracy=0.7742
+
+FRENCH
+  comments=446  gold_names=444  predicted_names=447
+  true_positives=402  false_positives=26  false_negatives=42
+  precision=0.9418  recall=0.9054  F1=0.9233
+  hard_negative_comments=17  hard_negative_correct=14  hard_negative_accuracy=0.8235
+
+COMBINED
+  comments=1244  gold_names=1239  predicted_names=1237
+  true_positives=1114  false_positives=69  false_negatives=125
+  precision=0.9442  recall=0.8991  F1=0.9211
+  hard_negative_comments=48  hard_negative_correct=38  hard_negative_accuracy=0.7917
+
+POLICY_DECISION (not in main F1)
+  comments=16  predicted_spans=15  gold_spans=16
