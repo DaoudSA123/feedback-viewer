@@ -1568,6 +1568,32 @@ public class NameRedactionBaselineEval {
             window.addEventListener('scroll', () => {
               toTop.classList.toggle('visible', window.scrollY > 400);
             }, { passive: true });
+            (function () {
+              if (window.__evalScrollBridge) return;
+              window.__evalScrollBridge = true;
+              let applying = false;
+              function maxY() {
+                const el = document.documentElement;
+                const body = document.body;
+                const h = Math.max(el ? el.scrollHeight : 0, body ? body.scrollHeight : 0);
+                return Math.max(0, h - window.innerHeight);
+              }
+              window.addEventListener('scroll', () => {
+                if (applying || !window.parent || window.parent === window) return;
+                const m = maxY();
+                window.parent.postMessage({
+                  source: 'eval-report-scroll',
+                  ratio: m <= 0 ? 0 : window.scrollY / m
+                }, '*');
+              }, { passive: true });
+              window.addEventListener('message', (ev) => {
+                const data = ev.data;
+                if (!data || data.source !== 'eval-compare-scroll') return;
+                applying = true;
+                window.scrollTo(window.scrollX, (data.ratio || 0) * maxY());
+                requestAnimationFrame(() => { applying = false; });
+              });
+            })();
           </script>
         </body>
         </html>
@@ -1732,6 +1758,32 @@ public class NameRedactionBaselineEval {
             window.addEventListener('scroll', () => {
               toTop.classList.toggle('visible', window.scrollY > 400);
             }, { passive: true });
+            (function () {
+              if (window.__evalScrollBridge) return;
+              window.__evalScrollBridge = true;
+              let applying = false;
+              function maxY() {
+                const el = document.documentElement;
+                const body = document.body;
+                const h = Math.max(el ? el.scrollHeight : 0, body ? body.scrollHeight : 0);
+                return Math.max(0, h - window.innerHeight);
+              }
+              window.addEventListener('scroll', () => {
+                if (applying || !window.parent || window.parent === window) return;
+                const m = maxY();
+                window.parent.postMessage({
+                  source: 'eval-report-scroll',
+                  ratio: m <= 0 ? 0 : window.scrollY / m
+                }, '*');
+              }, { passive: true });
+              window.addEventListener('message', (ev) => {
+                const data = ev.data;
+                if (!data || data.source !== 'eval-compare-scroll') return;
+                applying = true;
+                window.scrollTo(window.scrollX, (data.ratio || 0) * maxY());
+                requestAnimationFrame(() => { applying = false; });
+              });
+            })();
           </script>
         </body>
         </html>

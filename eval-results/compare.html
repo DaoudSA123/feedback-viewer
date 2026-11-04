@@ -67,6 +67,12 @@
       border: 1px solid var(--line); background: var(--accent); color: var(--ink);
     }
     button.action:hover { background: #e0d5c3; }
+    .sync-toggle {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-family: "Avenir Next", "Segoe UI", sans-serif; font-size: 0.92rem;
+      color: var(--ink); user-select: none;
+    }
+    .sync-toggle input { width: 1rem; height: 1rem; accent-color: #5a4632; }
     .hint { color: #666; font-size: 0.88rem; margin: 0.55rem 0 0; }
     .status { color: #8a4b00; font-size: 0.88rem; margin: 0.4rem 0 0; min-height: 1.2em; }
     .frames {
@@ -130,8 +136,12 @@
     </div>
     <div class="toolbar">
       <button type="button" class="action" id="swapBtn">Swap left / right</button>
+      <label class="sync-toggle">
+        <input type="checkbox" id="syncScroll" checked/>
+        Sync scroll
+      </label>
     </div>
-    <p class="hint">Pick any two scored reports to compare side by side.</p>
+    <p class="hint">Pick any two scored reports to compare side by side. With Sync scroll on, scrolling one pane keeps the other at the same relative position.</p>
     <p class="status" id="status"></p>
   </header>
 
@@ -248,6 +258,32 @@
     function measureHeader() {
       document.documentElement.style.setProperty('--header-h', header.offsetHeight + 'px');
     }
+
+    const syncScrollToggle = document.getElementById('syncScroll');
+    let syncLock = false;
+
+    // Reports post {source:'eval-report-scroll', ratio}. We forward
+    // {source:'eval-compare-scroll', ratio} to the other pane. This avoids
+    // reading iframe DOM (blocked for file:// / opaque origins).
+    window.addEventListener('message', function (ev) {
+      if (!syncScrollToggle.checked || syncLock) return;
+      const data = ev.data;
+      if (!data || data.source !== 'eval-report-scroll' || typeof data.ratio !== 'number') return;
+      const leftWin = leftFrame.contentWindow;
+      const rightWin = rightFrame.contentWindow;
+      if (!leftWin || !rightWin) return;
+      let targetWin = null;
+      if (ev.source === leftWin) targetWin = rightWin;
+      else if (ev.source === rightWin) targetWin = leftWin;
+      else return;
+      syncLock = true;
+      try {
+        targetWin.postMessage({ source: 'eval-compare-scroll', ratio: data.ratio }, '*');
+      } catch (err) {
+        setStatus('Scroll sync failed to reach the other report pane.');
+      }
+      requestAnimationFrame(function () { syncLock = false; });
+    });
 
     function loadFrames() {
       const a = reportPath({ dataset: leftDataset, run: leftRun, model: leftModel });
