@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{wide_en}" lang="en">
+
+<head>
+    <title>GC Feedback report - Feedback Viewer - Canada.ca</title>
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.3.2/datatables.min.css" />
+    <link rel="stylesheet" type="text/css" href="/css/feedbackReport_styles.css" />
+</head>
+
+<body>
+    <th:block layout:fragment="content">
+        <main class="container">
+            <h1 id="wb-cont">GC Feedback report</h1>
+            <p>See how people answered "Did you find what you were looking for?" on pages that have the GC
+                Feedback tool. Choose what to report on, pick a date range and generate the report.</p>
+            <div class="alert alert-warning">
+                <p>Mock data: the numbers on this page are generated for testing and are not real feedback.</p>
+            </div>
+
+            <div class="wb-tabs">
+                <div class="tabpanels">
+                    <details id="report-page" open="open">
+                        <summary>Individual page</summary>
+                        <div class="wb-frmvld">
+                            <form class="report-form" data-scope="PAGE" data-scope-label="Individual page"
+                                novalidate="novalidate">
+                                <div class="form-group">
+                                    <label for="page-url" class="required"><span class="field-name">URL</span>
+                                        <strong class="required">(required)</strong></label>
+                                    <input type="url" id="page-url" name="value" class="form-control full-width"
+                                        required="required" placeholder="https://www.canada.ca/en/..." />
+                                </div>
+                                <div class="form-group">
+                                    <label for="page-start" class="required"><span class="field-name">Start date</span>
+                                        <strong class="required">(required)</strong></label>
+                                    <input type="date" id="page-start" name="startDate" class="form-control"
+                                        required="required" th:value="${defaultStartDate}" th:max="${maxDate}" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="page-end" class="required"><span class="field-name">End date</span>
+                                        <strong class="required">(required)</strong></label>
+                                    <input type="date" id="page-end" name="endDate" class="form-control"
+                                        required="required" th:value="${defaultEndDate}" th:max="${maxDate}" />
+                                </div>
+                                <button type="submit" class="btn btn-primary">Generate report</button>
+                            </form>
+                        </div>
+                    </details>
+
+                    <details id="report-group">
+                        <summary>Group of pages / node</summary>
+                        <div class="wb-frmvld">
+                            <form class="report-form" data-scope="GROUP" data-scope-label="Group of pages"
+                                novalidate="novalidate">
+                                <div class="form-group">
+                                    <label for="group-urls" class="required"><span class="field-name">URLs</span>
+                                        <strong class="required">(required)</strong></label>
+                                    <p id="group-urls-hint" class="small">One URL per line, up to 50.</p>
+                                    <textarea id="group-urls" name="value" class="form-control full-width" rows="5"
+                                        required="required" aria-describedby="group-urls-hint"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="group-start" class="required"><span class="field-name">Start date</span>
+                                        <strong class="required">(required)</strong></label>
+                                    <input type="date" id="group-start" name="startDate" class="form-control"
+                                        required="required" th:value="${defaultStartDate}" th:max="${maxDate}" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="group-end" class="required"><span class="field-name">End date</span>
+                                        <strong class="required">(required)</strong></label>
+                                    <input type="date" id="group-end" name="endDate" class="form-control"
+                                        required="required" th:value="${defaultEndDate}" th:max="${maxDate}" />
+                                </div>
+                                <button type="submit" class="btn btn-primary">Generate report</button>
+                            </form>
+                        </div>
+                    </details>
+
+                    <details id="report-department">
+                        <summary>For a department</summary>
+                        <div class="wb-frmvld">
+                            <form class="report-form" data-scope="DEPARTMENT" data-scope-label="Department"
+                                novalidate="novalidate">
+                                <div class="form-group">
+                                    <label for="department-code" class="required"><span
+                                            class="field-name">Department</span>
+                                        <strong class="required">(required)</strong></label>
+                                    <select id="department-code" name="value" class="form-control" required="required">
+                                        <option value="">Select a department</option>
+                                        <option th:each="code : ${departments}" th:value="${code}" th:text="${code}">
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="department-start" class="required"><span class="field-name">Start
+                                            date</span>
+                                        <strong class="required">(required)</strong></label>
+                                    <input type="date" id="department-start" name="startDate" class="form-control"
+                                        required="required" th:value="${defaultStartDate}" th:max="${maxDate}" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="department-end" class="required"><span class="field-name">End
+                                            date</span>
+                                        <strong class="required">(required)</strong></label>
+                                    <input type="date" id="department-end" name="endDate" class="form-control"
+                                        required="required" th:value="${defaultEndDate}" th:max="${maxDate}" />
+                                </div>
+                                <button type="submit" class="btn btn-primary">Generate report</button>
+                            </form>
+                        </div>
+                    </details>
+
+                    <details id="report-gc">
+                        <summary>For all the GC</summary>
+                        <div class="wb-frmvld">
+                            <form class="report-form" data-scope="GC" data-scope-label="All the GC"
+                                novalidate="novalidate">
+                                <p>Covers every page that has the GC Feedback tool.</p>
+                                <div class="form-group">
+                                    <label for="gc-start" class="required"><span class="field-name">Start date</span>
+                                        <strong class="required">(required)</strong></label>
+                                    <input type="date" id="gc-start" name="startDate" class="form-control"
+                                        required="required" th:value="${defaultStartDate}" th:max="${maxDate}" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="gc-end" class="required"><span class="field-name">End date</span>
+                                        <strong class="required">(required)</strong></label>
+                                    <input type="date" id="gc-end" name="endDate" class="form-control"
+                                        required="required" th:value="${defaultEndDate}" th:max="${maxDate}" />
+                                </div>
+                                <button type="submit" class="btn btn-primary">Generate report</button>
+                            </form>
+                        </div>
+                    </details>
+                </div>
+            </div>
+
+            <p id="report-status" class="mrgn-tp-md" role="status" aria-live="polite"
+                data-loading="Generating the report..." data-done="The report is ready."
+                data-period="From {start} to {end}"></p>
+            <div id="report-error" class="alert alert-danger" role="alert" hidden="hidden">
+                <p>The report could not be generated. Check the URLs and that the start date is before the end
+                    date (at most 366 days apart), then try again.</p>
+            </div>
+
+            <section id="report-results" class="mrgn-tp-lg" hidden="hidden">
+                <h2 id="report-heading" tabindex="-1">Report: <span id="report-scope"></span></h2>
+                <p><span id="report-period"></span></p>
+                <ul id="report-targets" class="report-targets"></ul>
+
+                <h3>Summary</h3>
+                <dl class="row report-stats">
+                    <div class="col-xs-6 col-md-3">
+                        <dt>Page views</dt>
+                        <dd id="stat-pageViews"></dd>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                        <dt>"Yes" clicks</dt>
+                        <dd id="stat-yes"></dd>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                        <dt>"No" clicks</dt>
+                        <dd id="stat-no"></dd>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                        <dt>Comments</dt>
+                        <dd id="stat-commentCount"></dd>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                        <dt>"Yes" rate</dt>
+                        <dd id="stat-yesRate"></dd>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                        <dt>Response rate</dt>
+                        <dd id="stat-responseRate"></dd>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                        <dt>Benchmark ("yes" rate)</dt>
+                        <dd id="stat-benchmarkYesRate"></dd>
+                    </div>
+                </dl>
+                <p class="small">"Yes" rate = "yes" clicks ÷ all clicks. Response rate = all clicks ÷ page views.
+                    The benchmark is a placeholder until the Canada.ca benchmark is set.</p>
+
+                <h3>Assessment</h3>
+                <div class="alert alert-success" data-assessment="ABOVE" hidden="hidden">
+                    <p>The "yes" rate is above the benchmark. Most people find what they need on these pages.</p>
+                </div>
+                <div class="alert alert-info" data-assessment="NEAR" hidden="hidden">
+                    <p>The "yes" rate is close to the benchmark. Check the comments for recurring problems.</p>
+                </div>
+                <div class="alert alert-warning" data-assessment="BELOW" hidden="hidden">
+                    <p>The "yes" rate is below the benchmark. Review the comments and consider an intervention.</p>
+                </div>
+                <div class="alert alert-info" data-assessment="INSUFFICIENT_DATA" hidden="hidden">
+                    <p>Fewer than 30 people answered in this period, so the rate is not reliable. Try a longer date
+                        range.</p>
+                </div>
+
+                <h3>"Yes" and "no" clicks by day</h3>
+                <div class="report-chart">
+                    <canvas id="report-chart" role="img"
+                        aria-label="Bar chart of yes and no clicks by day. The same data is in the table below."
+                        data-label-yes="Yes" data-label-no="No"></canvas>
+                </div>
+                <details>
+                    <summary>Data table for the chart</summary>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-condensed">
+                            <caption class="wb-inv">"Yes" and "no" clicks by day</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Page views</th>
+                                    <th scope="col">"Yes" clicks</th>
+                                    <th scope="col">"No" clicks</th>
+                                    <th scope="col">"Yes" rate</th>
+                                </tr>
+                            </thead>
+                            <tbody id="report-daily"></tbody>
+                        </table>
+                    </div>
+                </details>
+
+                <h3>Comments</h3>
+                <p>Showing the <span id="comments-shown"></span> most recent of <span
+                        id="comments-total"></span> comments. The download has all of them.</p>
+                <p>
+                    <a id="download-csv" class="btn btn-default" href="#">Download comments (CSV)</a>
+                    <a id="download-excel" class="btn btn-default" href="#">Download comments (Excel)</a>
+                </p>
+                <div class="feedback-tool-data">
+                    <div class="table-scroll-container">
+                        <table id="reportCommentsTable" class="dataTable">
+                            <caption class="wb-inv">Most recent comments</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">URL</th>
+                                    <th scope="col">Language</th>
+                                    <th scope="col">Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <h3>Next steps</h3>
+                <details>
+                    <summary>Analyzing comments</summary>
+                    <ul>
+                        <li>Download the comments and read a sample before drawing conclusions.</li>
+                        <li>Group comments by theme (for example: can't find information, unclear content,
+                            broken link, technical problem).</li>
+                        <li>Count how often each theme comes up and note the pages where it happens.</li>
+                        <li>Only use AI tools approved by your department, and remove any personal information first.
+                        </li>
+                    </ul>
+                    <label for="analyze-prompt">Prompt you can use with an approved AI tool</label>
+                    <textarea id="analyze-prompt" class="form-control full-width" rows="6" readonly="readonly">You are helping a Government of Canada web team understand page feedback. Below are comments left by people who answered "No" to "Did you find what you were looking for?". Group the comments into themes, give each theme a short name, count the comments in it and quote two representative comments. List the themes from most to least common. Do not guess at causes that the comments do not support.
+
+Comments:
+[paste comments here]</textarea>
+                    <button type="button" class="btn btn-default mrgn-tp-sm copy-prompt"
+                        data-target="analyze-prompt" data-copied="Copied">Copy prompt</button>
+                </details>
+                <details>
+                    <summary>Designing interventions</summary>
+                    <ul>
+                        <li>Start with the most common theme on the pages with the most "no" clicks.</li>
+                        <li>Write the problem as a user need ("I need to know how long processing takes").</li>
+                        <li>Choose the smallest change that could fix it: reword, move content up, fix a link or add
+                            a missing answer.</li>
+                        <li>Make one change at a time, then generate this report again after a few weeks to compare
+                            the "yes" rate.</li>
+                    </ul>
+                    <label for="intervention-prompt">Prompt you can use with an approved AI tool</label>
+                    <textarea id="intervention-prompt" class="form-control full-width" rows="6"
+                        readonly="readonly">You are helping a Government of Canada web team improve a Canada.ca page. Here are the main feedback themes and their counts, and the current page content. For each of the top 3 themes, suggest one specific, small content change that would address it, explain which user need it meets, and say how we could tell whether it worked using the "yes" rate. Follow the Canada.ca Content Style Guide.
+
+Themes:
+[paste themes here]
+
+Page content:
+[paste page content here]</textarea>
+                    <button type="button" class="btn btn-default mrgn-tp-sm copy-prompt"
+                        data-target="intervention-prompt" data-copied="Copied">Copy prompt</button>
+                </details>
+            </section>
+        </main>
+    </th:block>
+    <th:block layout:fragment="script">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.3.2/datatables.min.js"></script>
+        <script src="/js/safe-render.js"></script>
+        <script src="/js/feedbackReport.js"></script>
+    </th:block>
+</body>
+
+</html>

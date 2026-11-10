@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{wide_fr}" lang="fr">
+
+<head>
+    <title>Rapport de rétroaction du GC - Visualiseur de rétroaction - Canada.ca</title>
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.3.2/datatables.min.css" />
+    <link rel="stylesheet" type="text/css" href="/css/feedbackReport_styles.css" />
+</head>
+
+<body>
+    <th:block layout:fragment="content">
+        <main class="container">
+            <h1 id="wb-cont">Rapport de rétroaction du GC</h1>
+            <p>Voyez comment les gens ont répondu à « Avez-vous trouvé ce que vous cherchiez? » sur les pages qui
+                ont l'outil de rétroaction du GC. Choisissez l'objet du rapport, une période, puis générez le
+                rapport.</p>
+            <div class="alert alert-warning">
+                <p>Données fictives : les chiffres de cette page sont générés pour les essais et ne sont pas de
+                    vraies rétroactions.</p>
+            </div>
+
+            <div class="wb-tabs">
+                <div class="tabpanels">
+                    <details id="report-page" open="open">
+                        <summary>Page individuelle</summary>
+                        <div class="wb-frmvld">
+                            <form class="report-form" data-scope="PAGE" data-scope-label="Page individuelle"
+                                novalidate="novalidate">
+                                <div class="form-group">
+                                    <label for="page-url" class="required"><span class="field-name">URL</span>
+                                        <strong class="required">(obligatoire)</strong></label>
+                                    <input type="url" id="page-url" name="value" class="form-control full-width"
+                                        required="required" placeholder="https://www.canada.ca/fr/..." />
+                                </div>
+                                <div class="form-group">
+                                    <label for="page-start" class="required"><span class="field-name">Date de
+                                            début</span>
+                                        <strong class="required">(obligatoire)</strong></label>
+                                    <input type="date" id="page-start" name="startDate" class="form-control"
+                                        required="required" th:value="${defaultStartDate}" th:max="${maxDate}" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="page-end" class="required"><span class="field-name">Date de fin</span>
+                                        <strong class="required">(obligatoire)</strong></label>
+                                    <input type="date" id="page-end" name="endDate" class="form-control"
+                                        required="required" th:value="${defaultEndDate}" th:max="${maxDate}" />
+                                </div>
+                                <button type="submit" class="btn btn-primary">Générer le rapport</button>
+                            </form>
+                        </div>
+                    </details>
+
+                    <details id="report-group">
+                        <summary>Groupe de pages / nœud</summary>
+                        <div class="wb-frmvld">
+                            <form class="report-form" data-scope="GROUP" data-scope-label="Groupe de pages"
+                                novalidate="novalidate">
+                                <div class="form-group">
+                                    <label for="group-urls" class="required"><span class="field-name">URL</span>
+                                        <strong class="required">(obligatoire)</strong></label>
+                                    <p id="group-urls-hint" class="small">Une URL par ligne, jusqu'à 50.</p>
+                                    <textarea id="group-urls" name="value" class="form-control full-width" rows="5"
+                                        required="required" aria-describedby="group-urls-hint"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="group-start" class="required"><span class="field-name">Date de
+                                            début</span>
+                                        <strong class="required">(obligatoire)</strong></label>
+                                    <input type="date" id="group-start" name="startDate" class="form-control"
+                                        required="required" th:value="${defaultStartDate}" th:max="${maxDate}" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="group-end" class="required"><span class="field-name">Date de
+                                            fin</span>
+                                        <strong class="required">(obligatoire)</strong></label>
+                                    <input type="date" id="group-end" name="endDate" class="form-control"
+                                        required="required" th:value="${defaultEndDate}" th:max="${maxDate}" />
+                                </div>
+                                <button type="submit" class="btn btn-primary">Générer le rapport</button>
+                            </form>
+                        </div>
+                    </details>
+
+                    <details id="report-department">
+                        <summary>Pour un ministère</summary>
+                        <div class="wb-frmvld">
+                            <form class="report-form" data-scope="DEPARTMENT" data-scope-label="Ministère"
+                                novalidate="novalidate">
+                                <div class="form-group">
+                                    <label for="department-code" class="required"><span
+                                            class="field-name">Ministère</span>
+                                        <strong class="required">(obligatoire)</strong></label>
+                                    <select id="department-code" name="value" class="form-control" required="required">
+                                        <option value="">Choisissez un ministère</option>
+                                        <option th:each="code : ${departments}" th:value="${code}" th:text="${code}">
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="department-start" class="required"><span class="field-name">Date de
+                                            début</span>
+                                        <strong class="required">(obligatoire)</strong></label>
+                                    <input type="date" id="department-start" name="startDate" class="form-control"
+                                        required="required" th:value="${defaultStartDate}" th:max="${maxDate}" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="department-end" class="required"><span class="field-name">Date de
+                                            fin</span>
+                                        <strong class="required">(obligatoire)</strong></label>
+                                    <input type="date" id="department-end" name="endDate" class="form-control"
+                                        required="required" th:value="${defaultEndDate}" th:max="${maxDate}" />
+                                </div>
+                                <button type="submit" class="btn btn-primary">Générer le rapport</button>
+                            </form>
+                        </div>
+                    </details>
+
+                    <details id="report-gc">
+                        <summary>Pour l'ensemble du GC</summary>
+                        <div class="wb-frmvld">
+                            <form class="report-form" data-scope="GC" data-scope-label="Ensemble du GC"
+                                novalidate="novalidate">
+                                <p>Comprend toutes les pages qui ont l'outil de rétroaction du GC.</p>
+                                <div class="form-group">
+                                    <label for="gc-start" class="required"><span class="field-name">Date de
+                                            début</span>
+                                        <strong class="required">(obligatoire)</strong></label>
+                                    <input type="date" id="gc-start" name="startDate" class="form-control"
+                                        required="required" th:value="${defaultStartDate}" th:max="${maxDate}" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="gc-end" class="required"><span class="field-name">Date de fin</span>
+                                        <strong class="required">(obligatoire)</strong></label>
+                                    <input type="date" id="gc-end" name="endDate" class="form-control"
+                                        required="required" th:value="${defaultEndDate}" th:max="${maxDate}" />
+                                </div>
+                                <button type="submit" class="btn btn-primary">Générer le rapport</button>
+                            </form>
+                        </div>
+                    </details>
+                </div>
+            </div>
+
+            <p id="report-status" class="mrgn-tp-md" role="status" aria-live="polite"
+                data-loading="Génération du rapport..." data-done="Le rapport est prêt."
+                data-period="Du {start} au {end}"></p>
+            <div id="report-error" class="alert alert-danger" role="alert" hidden="hidden">
+                <p>Le rapport n'a pas pu être généré. Vérifiez les URL et que la date de début précède la date de
+                    fin (366 jours au plus), puis réessayez.</p>
+            </div>
+
+            <section id="report-results" class="mrgn-tp-lg" hidden="hidden">
+                <h2 id="report-heading" tabindex="-1">Rapport : <span id="report-scope"></span></h2>
+                <p><span id="report-period"></span></p>
+                <ul id="report-targets" class="report-targets"></ul>
+
+                <h3>Sommaire</h3>
+                <dl class="row report-stats">
+                    <div class="col-xs-6 col-md-3">
+                        <dt>Pages vues</dt>
+                        <dd id="stat-pageViews"></dd>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                        <dt>Clics « oui »</dt>
+                        <dd id="stat-yes"></dd>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                        <dt>Clics « non »</dt>
+                        <dd id="stat-no"></dd>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                        <dt>Commentaires</dt>
+                        <dd id="stat-commentCount"></dd>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                        <dt>Taux de « oui »</dt>
+                        <dd id="stat-yesRate"></dd>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                        <dt>Taux de réponse</dt>
+                        <dd id="stat-responseRate"></dd>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                        <dt>Point de référence (taux de « oui »)</dt>
+                        <dd id="stat-benchmarkYesRate"></dd>
+                    </div>
+                </dl>
+                <p class="small">Taux de « oui » = clics « oui » ÷ tous les clics. Taux de réponse = tous les clics ÷
+                    pages vues. Le point de référence est provisoire en attendant celui de Canada.ca.</p>
+
+                <h3>Évaluation</h3>
+                <div class="alert alert-success" data-assessment="ABOVE" hidden="hidden">
+                    <p>Le taux de « oui » est supérieur au point de référence. La plupart des gens trouvent ce
+                        qu'ils cherchent sur ces pages.</p>
+                </div>
+                <div class="alert alert-info" data-assessment="NEAR" hidden="hidden">
+                    <p>Le taux de « oui » est proche du point de référence. Consultez les commentaires pour repérer
+                        les problèmes récurrents.</p>
+                </div>
+                <div class="alert alert-warning" data-assessment="BELOW" hidden="hidden">
+                    <p>Le taux de « oui » est inférieur au point de référence. Examinez les commentaires et
+                        envisagez une intervention.</p>
+                </div>
+                <div class="alert alert-info" data-assessment="INSUFFICIENT_DATA" hidden="hidden">
+                    <p>Moins de 30 personnes ont répondu pendant cette période, le taux n'est donc pas fiable.
+                        Essayez une période plus longue.</p>
+                </div>
+
+                <h3>Clics « oui » et « non » par jour</h3>
+                <div class="report-chart">
+                    <canvas id="report-chart" role="img"
+                        aria-label="Graphique à barres des clics oui et non par jour. Les mêmes données figurent dans le tableau ci-dessous."
+                        data-label-yes="Oui" data-label-no="Non"></canvas>
+                </div>
+                <details>
+                    <summary>Tableau de données du graphique</summary>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-condensed">
+                            <caption class="wb-inv">Clics « oui » et « non » par jour</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Pages vues</th>
+                                    <th scope="col">Clics « oui »</th>
+                                    <th scope="col">Clics « non »</th>
+                                    <th scope="col">Taux de « oui »</th>
+                                </tr>
+                            </thead>
+                            <tbody id="report-daily"></tbody>
+                        </table>
+                    </div>
+                </details>
+
+                <h3>Commentaires</h3>
+                <p>Affichage des <span id="comments-shown"></span> commentaires les plus récents sur <span
+                        id="comments-total"></span>. Le téléchargement les contient tous.</p>
+                <p>
+                    <a id="download-csv" class="btn btn-default" href="#">Télécharger les commentaires (CSV)</a>
+                    <a id="download-excel" class="btn btn-default" href="#">Télécharger les commentaires
+                        (Excel)</a>
+                </p>
+                <div class="feedback-tool-data">
+                    <div class="table-scroll-container">
+                        <table id="reportCommentsTable" class="dataTable">
+                            <caption class="wb-inv">Commentaires les plus récents</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">URL</th>
+                                    <th scope="col">Langue</th>
+                                    <th scope="col">Commentaire</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <h3>Prochaines étapes</h3>
+                <details>
+                    <summary>Analyser les commentaires</summary>
+                    <ul>
+                        <li>Téléchargez les commentaires et lisez-en un échantillon avant de tirer des conclusions.
+                        </li>
+                        <li>Regroupez les commentaires par thème (par exemple : information introuvable, contenu
+                            peu clair, lien brisé, problème technique).</li>
+                        <li>Comptez la fréquence de chaque thème et notez les pages où il apparaît.</li>
+                        <li>N'utilisez que les outils d'IA approuvés par votre ministère et retirez d'abord tout
+                            renseignement personnel.</li>
+                    </ul>
+                    <label for="analyze-prompt">Requête à utiliser avec un outil d'IA approuvé</label>
+                    <textarea id="analyze-prompt" class="form-control full-width" rows="6" readonly="readonly">Vous aidez une équipe Web du gouvernement du Canada à comprendre la rétroaction sur ses pages. Voici des commentaires laissés par des personnes qui ont répondu « Non » à « Avez-vous trouvé ce que vous cherchiez? ». Regroupez les commentaires par thème, donnez un nom court à chaque thème, comptez les commentaires de chaque thème et citez deux commentaires représentatifs. Classez les thèmes du plus fréquent au moins fréquent. Ne supposez pas de causes que les commentaires n'appuient pas.
+
+Commentaires :
+[collez les commentaires ici]</textarea>
+                    <button type="button" class="btn btn-default mrgn-tp-sm copy-prompt"
+                        data-target="analyze-prompt" data-copied="Copiée">Copier la requête</button>
+                </details>
+                <details>
+                    <summary>Concevoir des interventions</summary>
+                    <ul>
+                        <li>Commencez par le thème le plus fréquent sur les pages qui ont le plus de clics « non ».
+                        </li>
+                        <li>Formulez le problème comme un besoin de l'utilisateur (« J'ai besoin de connaître le
+                            délai de traitement »).</li>
+                        <li>Choisissez le plus petit changement qui pourrait le régler : reformuler, remonter le
+                            contenu, corriger un lien ou ajouter une réponse manquante.</li>
+                        <li>Faites un changement à la fois, puis générez ce rapport de nouveau après quelques
+                            semaines pour comparer le taux de « oui ».</li>
+                    </ul>
+                    <label for="intervention-prompt">Requête à utiliser avec un outil d'IA approuvé</label>
+                    <textarea id="intervention-prompt" class="form-control full-width" rows="6"
+                        readonly="readonly">Vous aidez une équipe Web du gouvernement du Canada à améliorer une page de Canada.ca. Voici les principaux thèmes de rétroaction et leur nombre, ainsi que le contenu actuel de la page. Pour chacun des 3 principaux thèmes, proposez un petit changement précis au contenu qui y répondrait, expliquez à quel besoin de l'utilisateur il répond et comment nous pourrions savoir s'il a fonctionné à l'aide du taux de « oui ». Suivez le Guide de rédaction du contenu du site Canada.ca.
+
+Thèmes :
+[collez les thèmes ici]
+
+Contenu de la page :
+[collez le contenu de la page ici]</textarea>
+                    <button type="button" class="btn btn-default mrgn-tp-sm copy-prompt"
+                        data-target="intervention-prompt" data-copied="Copiée">Copier la requête</button>
+                </details>
+            </section>
+        </main>
+    </th:block>
+    <th:block layout:fragment="script">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.3.2/datatables.min.js"></script>
+        <script src="/js/safe-render.js"></script>
+        <script src="/js/feedbackReport.js"></script>
+    </th:block>
+</body>
+
+</html>

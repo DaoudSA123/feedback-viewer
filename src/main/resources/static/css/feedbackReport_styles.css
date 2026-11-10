@@ -1,0 +1,169 @@
+/* Feedback report */
+
+.report-stats dt {
+  font-weight: normal;
+}
+
+.report-stats dd {
+  font-size: 1.6em;
+  font-weight: bold;
+  margin-bottom: 1em;
+}
+
+.report-targets {
+  word-break: break-all;
+}
+
+/* Chart */
+.report-chart {
+  position: relative;
+  height: 320px;
+  margin-bottom: 1em;
+}
+
+/* Comments table */
+.table-scroll-container {
+  position: relative;
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 500px;
+  border-bottom: 2px solid #e0e0e0;
+  margin-bottom: 0;
+}
+
+.feedback-tool-data {
+  background: #fff;
+  padding: 1.5em 1.5em 0;
+  border: 1px solid #ddd;
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  margin: 2ch auto 0;
+  overflow: visible;
+  width: 85%;
+}
+
+.feedback-tool-data table.dataTable {
+  width: 100% !important;
+  table-layout: auto;
+  margin-bottom: 0 !important;
+}
+
+.feedback-tool-data table.dataTable thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #f8f9fa;
+}
+
+.feedback-tool-data table.dataTable thead th {
+  background: #f8f9fa !important;
+  padding: 10px 8px;
+  border-bottom: 2px solid #333 !important;
+  border-top: none !important;
+  font-weight: 600;
+  text-align: left;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.feedback-tool-data table.dataTable tbody tr {
+  transition: background-color 0.2s ease;
+  border: none !important;
+}
+
+.feedback-tool-data table.dataTable tbody tr:hover {
+  background-color: #f8fafb;
+}
+
+.feedback-tool-data table.dataTable tbody td {
+  padding: 10px 8px;
+  vertical-align: middle;
+  font-size: 13px;
+  border-top: 1px solid #e0e0e0 !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.feedback-tool-data table.dataTable tbody tr:first-child td {
+  border-top: none !important;
+}
+
+.table-controls-outside {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 1.5em;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  margin: 0 auto 4ch;
+  width: 85%;
+}
+
+#report-results .dataTables_info,
+#report-results .dataTables_length label {
+  font-size: 13px;
+  color: #555;
+  font-weight: 400;
+  margin: 0;
+}
+
+#report-results .dataTables_paginate {
+  flex: 1;
+  text-align: center;
+}
+
+#report-results .dataTables_length select {
+  padding: 5px 28px 5px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+  background: #fff;
+  cursor: pointer;
+}
+
+#report-results .dt-paging {
+  display: inline-flex;
+  gap: 2px;
+  align-items: center;
+}
+
+#report-results .dt-paging-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px !important;
+  border: none !important;
+  background: transparent !important;
+  color: #555 !important;
+  font-size: 13px;
+  min-width: 32px;
+  height: 32px;
+  text-decoration: none !important;
+  border-radius: 4px;
+  box-shadow: none !important;
+}
+
+#report-results .dt-paging-button:hover:not(.disabled):not(.current) {
+  background: #f0f0f0 !important;
+  color: #26374a !important;
+}
+
+#report-results .dt-paging-button.current,
+#report-results .dt-paging-button.current:hover {
+  background: #26374a !important;
+  color: white !important;
+  border: none !important;
+}
+
+#report-results .dt-paging-button.disabled,
+#report-results .dt-paging-button.disabled:hover {
+  color: #bbb !important;
+  background: transparent !important;
+  border: none !important;
+}

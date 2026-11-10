@@ -26,6 +26,7 @@ docker/.env
 .DS_Store
 
 # IDE files
+.cursor/
 .settings/
 .project
 .classpath
