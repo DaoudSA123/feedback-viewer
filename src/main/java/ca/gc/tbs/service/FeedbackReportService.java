@@ -31,7 +31,7 @@ public class FeedbackReportService {
   static final int MIN_RESPONSES = 30;
 
   static final int MAX_GROUP_URLS = 50;
-  static final int MAX_RANGE_DAYS = 366;
+  static final int MAX_RANGE_YEARS = 5;
 
   static final int COMMENTS_SHOWN = 100;
 
@@ -117,8 +117,8 @@ public class FeedbackReportService {
     if (start.isAfter(end)) {
       throw new IllegalArgumentException("startDate is after endDate");
     }
-    if (ChronoUnit.DAYS.between(start, end) + 1 > MAX_RANGE_DAYS) {
-      throw new IllegalArgumentException("Date range is longer than " + MAX_RANGE_DAYS + " days");
+    if (start.plusYears(MAX_RANGE_YEARS).isBefore(end)) {
+      throw new IllegalArgumentException("Date range is longer than " + MAX_RANGE_YEARS + " years");
     }
     return new ReportRequest(parsedScope, parseTargets(parsedScope, value), start, end);
   }

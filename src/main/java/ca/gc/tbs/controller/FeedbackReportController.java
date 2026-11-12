@@ -33,7 +33,7 @@ public class FeedbackReportController {
     var mav = new ModelAndView("feedbackReport_" + lang);
     mav.addObject("lang", lang);
     mav.addObject("departments", FeedbackReportService.DEPARTMENTS);
-    mav.addObject("defaultStartDate", today.minusDays(30));
+    mav.addObject("defaultStartDate", today.minusYears(5));
     mav.addObject("defaultEndDate", today.minusDays(1));
     mav.addObject("maxDate", today);
     return mav;

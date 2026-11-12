@@ -190,8 +190,9 @@
     });
 
     reportDaily = report.daily;
-    byId("clicks-timeline").value = "day";
-    byId("no-rate-timeline").value = "day";
+    var bucket = initialBucket(report.daily);
+    byId("clicks-timeline").value = bucket;
+    byId("no-rate-timeline").value = bucket;
     setText("comments-shown", formatNumber(report.comments.length));
     setText("comments-total", formatNumber(report.commentCount));
     byId("download-csv").href = "/reports/comments/exportCSV?" + query;
@@ -205,6 +206,13 @@
     showNoRate();
     status.textContent = status.dataset.done;
     byId("report-heading").focus();
+  }
+
+  function initialBucket(daily) {
+    if (daily.length < 2) return "day";
+    var startYear = daily[0].date.slice(0, 4);
+    var endYear = daily[daily.length - 1].date.slice(0, 4);
+    return startYear === endYear ? "day" : "year";
   }
 
   function periodKey(isoDate, bucket) {

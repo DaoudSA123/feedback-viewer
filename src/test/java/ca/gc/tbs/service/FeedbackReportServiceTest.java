@@ -7,6 +7,7 @@ import ca.gc.tbs.service.FeedbackReportService.Report;
 import ca.gc.tbs.service.FeedbackReportService.ReportComment;
 import ca.gc.tbs.service.FeedbackReportService.Scope;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -103,7 +104,7 @@ class FeedbackReportServiceTest {
             List.of("PAGE", "javascript:alert(1)", "2026-10-01", "2026-10-31"),
             List.of("DEPARTMENT", "XYZ", "2026-10-01", "2026-10-31"),
             List.of("PAGE", PAGE_A, "2026-10-31", "2026-10-01"),
-            List.of("PAGE", PAGE_A, "2025-01-01", "2026-01-02"),
+            List.of("PAGE", PAGE_A, "2020-01-01", "2025-01-02"),
             List.of("PAGE", PAGE_A, "10/01/2026", "2026-10-31"),
             List.of("PAGE", PAGE_A, "", "2026-10-31"))) {
       assertThatThrownBy(
@@ -137,5 +138,20 @@ class FeedbackReportServiceTest {
 
     assertThat(request.startDate()).isEqualTo(LocalDate.of(2024, 1, 1));
     assertThat(service.generate(request).daily()).hasSize(366);
+  }
+
+  @Test
+  void mockDataCanSpanFiveYears() {
+    LocalDate start = LocalDate.of(2021, 1, 1);
+    LocalDate end = start.plusYears(FeedbackReportService.MAX_RANGE_YEARS);
+    var request = service.parseRequest("PAGE", PAGE_A, start.toString(), end.toString());
+    Report r = service.generate(request);
+
+    assertThat(r.daily()).hasSize((int) ChronoUnit.DAYS.between(start, end) + 1);
+    assertThat(r.daily().getFirst().date()).isEqualTo("2021-01-01");
+    assertThat(r.daily().getLast().date()).isEqualTo("2026-01-01");
+    assertThat(r.comments())
+        .extracting(ReportComment::date)
+        .allMatch(d -> d.compareTo("2021-01-01") >= 0 && d.compareTo("2026-01-01") <= 0);
   }
 }
