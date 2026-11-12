@@ -3,7 +3,7 @@
     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{wide_fr}" lang="fr">
 
 <head>
-    <title>Rapport de rétroaction du GC - Visualiseur de rétroaction - Canada.ca</title>
+    <title>Rétroaction GC - Visualiseur de rétroaction - Canada.ca</title>
     <link rel="stylesheet" type="text/css"
         href="https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.3.2/datatables.min.css" />
     <link rel="stylesheet" type="text/css" href="/css/feedbackReport_styles.css" />
@@ -12,21 +12,17 @@
 <body>
     <th:block layout:fragment="content">
         <main class="container">
-            <h1 id="wb-cont">Rapport de rétroaction du GC</h1>
+            <h1 id="wb-cont">Rétroaction GC</h1>
             <p>Voyez comment les gens ont répondu à « Avez-vous trouvé ce que vous cherchiez? » sur les pages qui
                 ont l'outil de rétroaction du GC. Choisissez l'objet du rapport, une période, puis générez le
                 rapport.</p>
-            <div class="alert alert-warning">
-                <p>Données fictives : les chiffres de cette page sont générés pour les essais et ne sont pas de
-                    vraies rétroactions.</p>
-            </div>
 
             <div class="wb-tabs">
                 <div class="tabpanels">
                     <details id="report-page" open="open">
-                        <summary>Page individuelle</summary>
+                        <summary>Pour une page précise</summary>
                         <div class="wb-frmvld">
-                            <form class="report-form" data-scope="PAGE" data-scope-label="Page individuelle"
+                            <form class="report-form" data-scope="PAGE" data-scope-label="Pour une page précise"
                                 novalidate="novalidate">
                                 <div class="form-group">
                                     <label for="page-url" class="required"><span class="field-name">URL</span>
@@ -47,15 +43,15 @@
                                     <input type="date" id="page-end" name="endDate" class="form-control"
                                         required="required" th:value="${defaultEndDate}" th:max="${maxDate}" />
                                 </div>
-                                <button type="submit" class="btn btn-primary">Générer le rapport</button>
+                                <button type="submit" class="btn btn-primary">Afficher les résultats</button>
                             </form>
                         </div>
                     </details>
 
                     <details id="report-group">
-                        <summary>Groupe de pages / nœud</summary>
+                        <summary>Pour un groupe de pages</summary>
                         <div class="wb-frmvld">
-                            <form class="report-form" data-scope="GROUP" data-scope-label="Groupe de pages"
+                            <form class="report-form" data-scope="GROUP" data-scope-label="Pour un groupe de pages"
                                 novalidate="novalidate">
                                 <div class="form-group">
                                     <label for="group-urls" class="required"><span class="field-name">URL</span>
@@ -78,15 +74,15 @@
                                     <input type="date" id="group-end" name="endDate" class="form-control"
                                         required="required" th:value="${defaultEndDate}" th:max="${maxDate}" />
                                 </div>
-                                <button type="submit" class="btn btn-primary">Générer le rapport</button>
+                                <button type="submit" class="btn btn-primary">Afficher les résultats</button>
                             </form>
                         </div>
                     </details>
 
                     <details id="report-department">
-                        <summary>Pour un ministère</summary>
+                        <summary>Pour une institution</summary>
                         <div class="wb-frmvld">
-                            <form class="report-form" data-scope="DEPARTMENT" data-scope-label="Ministère"
+                            <form class="report-form" data-scope="DEPARTMENT" data-scope-label="Pour une institution"
                                 novalidate="novalidate">
                                 <div class="form-group">
                                     <label for="department-code" class="required"><span
@@ -112,7 +108,7 @@
                                     <input type="date" id="department-end" name="endDate" class="form-control"
                                         required="required" th:value="${defaultEndDate}" th:max="${maxDate}" />
                                 </div>
-                                <button type="submit" class="btn btn-primary">Générer le rapport</button>
+                                <button type="submit" class="btn btn-primary">Afficher les résultats</button>
                             </form>
                         </div>
                     </details>
@@ -136,7 +132,7 @@
                                     <input type="date" id="gc-end" name="endDate" class="form-control"
                                         required="required" th:value="${defaultEndDate}" th:max="${maxDate}" />
                                 </div>
-                                <button type="submit" class="btn btn-primary">Générer le rapport</button>
+                                <button type="submit" class="btn btn-primary">Afficher les résultats</button>
                             </form>
                         </div>
                     </details>
@@ -187,26 +183,6 @@
                         <dd id="stat-benchmarkYesRate"></dd>
                     </div>
                 </dl>
-                <p class="small">Taux de « oui » = clics « oui » ÷ tous les clics. Taux de réponse = tous les clics ÷
-                    pages vues. Le point de référence est provisoire en attendant celui de Canada.ca.</p>
-
-                <h3>Évaluation</h3>
-                <div class="alert alert-success" data-assessment="ABOVE" hidden="hidden">
-                    <p>Le taux de « oui » est supérieur au point de référence. La plupart des gens trouvent ce
-                        qu'ils cherchent sur ces pages.</p>
-                </div>
-                <div class="alert alert-info" data-assessment="NEAR" hidden="hidden">
-                    <p>Le taux de « oui » est proche du point de référence. Consultez les commentaires pour repérer
-                        les problèmes récurrents.</p>
-                </div>
-                <div class="alert alert-warning" data-assessment="BELOW" hidden="hidden">
-                    <p>Le taux de « oui » est inférieur au point de référence. Examinez les commentaires et
-                        envisagez une intervention.</p>
-                </div>
-                <div class="alert alert-info" data-assessment="INSUFFICIENT_DATA" hidden="hidden">
-                    <p>Moins de 30 personnes ont répondu pendant cette période, le taux n'est donc pas fiable.
-                        Essayez une période plus longue.</p>
-                </div>
 
                 <h3>Clics « oui » et « non » par jour</h3>
                 <div class="report-chart">
@@ -241,6 +217,10 @@
                     <a id="download-excel" class="btn btn-default" href="#">Télécharger les commentaires
                         (Excel)</a>
                 </p>
+            </section>
+        </main>
+        <div id="report-comments" class="col-lg-12" hidden="hidden">
+            <div class="row custom-row">
                 <div class="feedback-tool-data">
                     <div class="table-scroll-container">
                         <table id="reportCommentsTable" class="dataTable">
@@ -257,7 +237,10 @@
                         </table>
                     </div>
                 </div>
-
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div id="report-next" class="container" hidden="hidden">
                 <h3>Prochaines étapes</h3>
                 <details>
                     <summary>Analyser les commentaires</summary>
@@ -302,8 +285,7 @@ Contenu de la page :
                     <button type="button" class="btn btn-default mrgn-tp-sm copy-prompt"
                         data-target="intervention-prompt" data-copied="Copiée">Copier la requête</button>
                 </details>
-            </section>
-        </main>
+        </div>
     </th:block>
     <th:block layout:fragment="script">
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

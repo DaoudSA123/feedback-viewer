@@ -105,20 +105,20 @@
   width: 85%;
 }
 
-#report-results .dataTables_info,
-#report-results .dataTables_length label {
+#report-comments .dataTables_info,
+#report-comments .dataTables_length label {
   font-size: 13px;
   color: #555;
   font-weight: 400;
   margin: 0;
 }
 
-#report-results .dataTables_paginate {
+#report-comments .dataTables_paginate {
   flex: 1;
   text-align: center;
 }
 
-#report-results .dataTables_length select {
+#report-comments .dataTables_length select {
   padding: 5px 28px 5px 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -127,13 +127,13 @@
   cursor: pointer;
 }
 
-#report-results .dt-paging {
+#report-comments .dt-paging {
   display: inline-flex;
   gap: 2px;
   align-items: center;
 }
 
-#report-results .dt-paging-button {
+#report-comments .dt-paging-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -149,20 +149,20 @@
   box-shadow: none !important;
 }
 
-#report-results .dt-paging-button:hover:not(.disabled):not(.current) {
+#report-comments .dt-paging-button:hover:not(.disabled):not(.current) {
   background: #f0f0f0 !important;
   color: #26374a !important;
 }
 
-#report-results .dt-paging-button.current,
-#report-results .dt-paging-button.current:hover {
+#report-comments .dt-paging-button.current,
+#report-comments .dt-paging-button.current:hover {
   background: #26374a !important;
   color: white !important;
   border: none !important;
 }
 
-#report-results .dt-paging-button.disabled,
-#report-results .dt-paging-button.disabled:hover {
+#report-comments .dt-paging-button.disabled,
+#report-comments .dt-paging-button.disabled:hover {
   color: #bbb !important;
   background: transparent !important;
   border: none !important;

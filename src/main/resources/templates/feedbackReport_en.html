@@ -3,7 +3,7 @@
     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{wide_en}" lang="en">
 
 <head>
-    <title>GC Feedback report - Feedback Viewer - Canada.ca</title>
+    <title>GC Feedback - Feedback Viewer - Canada.ca</title>
     <link rel="stylesheet" type="text/css"
         href="https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.3.2/datatables.min.css" />
     <link rel="stylesheet" type="text/css" href="/css/feedbackReport_styles.css" />
@@ -12,19 +12,16 @@
 <body>
     <th:block layout:fragment="content">
         <main class="container">
-            <h1 id="wb-cont">GC Feedback report</h1>
+            <h1 id="wb-cont">GC Feedback</h1>
             <p>See how people answered "Did you find what you were looking for?" on pages that have the GC
                 Feedback tool. Choose what to report on, pick a date range and generate the report.</p>
-            <div class="alert alert-warning">
-                <p>Mock data: the numbers on this page are generated for testing and are not real feedback.</p>
-            </div>
 
             <div class="wb-tabs">
                 <div class="tabpanels">
                     <details id="report-page" open="open">
-                        <summary>Individual page</summary>
+                        <summary>For a specific page</summary>
                         <div class="wb-frmvld">
-                            <form class="report-form" data-scope="PAGE" data-scope-label="Individual page"
+                            <form class="report-form" data-scope="PAGE" data-scope-label="For a specific page"
                                 novalidate="novalidate">
                                 <div class="form-group">
                                     <label for="page-url" class="required"><span class="field-name">URL</span>
@@ -44,15 +41,15 @@
                                     <input type="date" id="page-end" name="endDate" class="form-control"
                                         required="required" th:value="${defaultEndDate}" th:max="${maxDate}" />
                                 </div>
-                                <button type="submit" class="btn btn-primary">Generate report</button>
+                                <button type="submit" class="btn btn-primary">View results</button>
                             </form>
                         </div>
                     </details>
 
                     <details id="report-group">
-                        <summary>Group of pages / node</summary>
+                        <summary>For a group of pages</summary>
                         <div class="wb-frmvld">
-                            <form class="report-form" data-scope="GROUP" data-scope-label="Group of pages"
+                            <form class="report-form" data-scope="GROUP" data-scope-label="For a group of pages"
                                 novalidate="novalidate">
                                 <div class="form-group">
                                     <label for="group-urls" class="required"><span class="field-name">URLs</span>
@@ -73,15 +70,15 @@
                                     <input type="date" id="group-end" name="endDate" class="form-control"
                                         required="required" th:value="${defaultEndDate}" th:max="${maxDate}" />
                                 </div>
-                                <button type="submit" class="btn btn-primary">Generate report</button>
+                                <button type="submit" class="btn btn-primary">View results</button>
                             </form>
                         </div>
                     </details>
 
                     <details id="report-department">
-                        <summary>For a department</summary>
+                        <summary>For an institution</summary>
                         <div class="wb-frmvld">
-                            <form class="report-form" data-scope="DEPARTMENT" data-scope-label="Department"
+                            <form class="report-form" data-scope="DEPARTMENT" data-scope-label="For an institution"
                                 novalidate="novalidate">
                                 <div class="form-group">
                                     <label for="department-code" class="required"><span
@@ -107,7 +104,7 @@
                                     <input type="date" id="department-end" name="endDate" class="form-control"
                                         required="required" th:value="${defaultEndDate}" th:max="${maxDate}" />
                                 </div>
-                                <button type="submit" class="btn btn-primary">Generate report</button>
+                                <button type="submit" class="btn btn-primary">View results</button>
                             </form>
                         </div>
                     </details>
@@ -130,7 +127,7 @@
                                     <input type="date" id="gc-end" name="endDate" class="form-control"
                                         required="required" th:value="${defaultEndDate}" th:max="${maxDate}" />
                                 </div>
-                                <button type="submit" class="btn btn-primary">Generate report</button>
+                                <button type="submit" class="btn btn-primary">View results</button>
                             </form>
                         </div>
                     </details>
@@ -181,23 +178,6 @@
                         <dd id="stat-benchmarkYesRate"></dd>
                     </div>
                 </dl>
-                <p class="small">"Yes" rate = "yes" clicks ÷ all clicks. Response rate = all clicks ÷ page views.
-                    The benchmark is a placeholder until the Canada.ca benchmark is set.</p>
-
-                <h3>Assessment</h3>
-                <div class="alert alert-success" data-assessment="ABOVE" hidden="hidden">
-                    <p>The "yes" rate is above the benchmark. Most people find what they need on these pages.</p>
-                </div>
-                <div class="alert alert-info" data-assessment="NEAR" hidden="hidden">
-                    <p>The "yes" rate is close to the benchmark. Check the comments for recurring problems.</p>
-                </div>
-                <div class="alert alert-warning" data-assessment="BELOW" hidden="hidden">
-                    <p>The "yes" rate is below the benchmark. Review the comments and consider an intervention.</p>
-                </div>
-                <div class="alert alert-info" data-assessment="INSUFFICIENT_DATA" hidden="hidden">
-                    <p>Fewer than 30 people answered in this period, so the rate is not reliable. Try a longer date
-                        range.</p>
-                </div>
 
                 <h3>"Yes" and "no" clicks by day</h3>
                 <div class="report-chart">
@@ -231,6 +211,10 @@
                     <a id="download-csv" class="btn btn-default" href="#">Download comments (CSV)</a>
                     <a id="download-excel" class="btn btn-default" href="#">Download comments (Excel)</a>
                 </p>
+            </section>
+        </main>
+        <div id="report-comments" class="col-lg-12" hidden="hidden">
+            <div class="row custom-row">
                 <div class="feedback-tool-data">
                     <div class="table-scroll-container">
                         <table id="reportCommentsTable" class="dataTable">
@@ -247,7 +231,10 @@
                         </table>
                     </div>
                 </div>
-
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div id="report-next" class="container" hidden="hidden">
                 <h3>Next steps</h3>
                 <details>
                     <summary>Analyzing comments</summary>
@@ -289,8 +276,7 @@ Page content:
                     <button type="button" class="btn btn-default mrgn-tp-sm copy-prompt"
                         data-target="intervention-prompt" data-copied="Copied">Copy prompt</button>
                 </details>
-            </section>
-        </main>
+        </div>
     </th:block>
     <th:block layout:fragment="script">
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

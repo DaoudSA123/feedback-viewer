@@ -46,8 +46,8 @@
       dom: 't<"table-controls-outside"lip>',
       initComplete: function () {
         // Move pagination controls outside the table wrapper
-        var box = document.querySelector("#report-results .feedback-tool-data");
-        var controls = document.querySelector("#report-results .table-controls-outside");
+        var box = document.querySelector("#report-comments .feedback-tool-data");
+        var controls = document.querySelector("#report-comments .table-controls-outside");
         if (box && controls) box.insertAdjacentElement("afterend", controls);
       },
     });
@@ -148,6 +148,8 @@
     byId("download-excel").href = "/reports/comments/exportExcel?" + query;
 
     byId("report-results").hidden = false;
+    byId("report-comments").hidden = false;
+    byId("report-next").hidden = false;
     renderComments(report.comments);
     drawChart(report.daily);
     status.textContent = status.dataset.done;
@@ -177,6 +179,8 @@
         if (error.name === "AbortError") return;
         status.textContent = "";
         byId("report-results").hidden = true;
+        byId("report-comments").hidden = true;
+        byId("report-next").hidden = true;
         byId("report-error").hidden = false;
       });
   }
