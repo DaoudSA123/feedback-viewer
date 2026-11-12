@@ -1,5 +1,15 @@
 /* Feedback report */
 
+/* Required asterisk sits in the left margin, level with the label. */
+.wb-frmvld {
+  padding-left: 0.87em;
+}
+
+.wb-frmvld label.required::before {
+  vertical-align: middle;
+  line-height: 1;
+}
+
 .report-stats dt {
   font-weight: normal;
 }

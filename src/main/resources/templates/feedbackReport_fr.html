@@ -13,9 +13,6 @@
     <th:block layout:fragment="content">
         <main class="container">
             <h1 id="wb-cont">Rétroaction GC</h1>
-            <p>Voyez comment les gens ont répondu à « Avez-vous trouvé ce que vous cherchiez? » sur les pages qui
-                ont l'outil de rétroaction du GC. Choisissez l'objet du rapport, une période, puis générez le
-                rapport.</p>
 
             <div class="wb-tabs">
                 <div class="tabpanels">
@@ -175,6 +172,10 @@
                         <dd id="stat-yesRate"></dd>
                     </div>
                     <div class="col-xs-6 col-md-3">
+                        <dt>Taux de « non »</dt>
+                        <dd id="stat-noRate"></dd>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
                         <dt>Taux de réponse</dt>
                         <dd id="stat-responseRate"></dd>
                     </div>
@@ -184,27 +185,74 @@
                     </div>
                 </dl>
 
-                <h3>Clics « oui » et « non » par jour</h3>
+                <h3>Clics « oui » et « non »</h3>
+                <div class="row">
+                    <div class="form-group col-xs-12 col-md-3">
+                        <label for="clicks-timeline">Regrouper par</label>
+                        <select id="clicks-timeline" class="form-control">
+                            <option value="day" data-heading="Date" selected="selected">Jour</option>
+                            <option value="week" data-heading="Semaine">Semaine</option>
+                            <option value="month" data-heading="Mois">Mois</option>
+                            <option value="quarter" data-heading="Trimestre">Trimestre</option>
+                            <option value="year" data-heading="Année">Année</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="report-chart">
                     <canvas id="report-chart" role="img"
-                        aria-label="Graphique à barres des clics oui et non par jour. Les mêmes données figurent dans le tableau ci-dessous."
+                        aria-label="Graphique à barres des clics oui et non. Les mêmes données figurent dans le tableau ci-dessous."
                         data-label-yes="Oui" data-label-no="Non"></canvas>
                 </div>
                 <details>
                     <summary>Tableau de données du graphique</summary>
                     <div class="table-responsive">
                         <table class="table table-striped table-condensed">
-                            <caption class="wb-inv">Clics « oui » et « non » par jour</caption>
+                            <caption class="wb-inv">Clics « oui » et « non »</caption>
                             <thead>
                                 <tr>
-                                    <th scope="col">Date</th>
+                                    <th id="clicks-period" scope="col">Date</th>
                                     <th scope="col">Pages vues</th>
                                     <th scope="col">Clics « oui »</th>
                                     <th scope="col">Clics « non »</th>
                                     <th scope="col">Taux de « oui »</th>
+                                    <th scope="col">Taux de « non »</th>
                                 </tr>
                             </thead>
                             <tbody id="report-daily"></tbody>
+                        </table>
+                    </div>
+                </details>
+
+                <h3>Évolution du taux de « non »</h3>
+                <div class="row">
+                    <div class="form-group col-xs-12 col-md-3">
+                        <label for="no-rate-timeline">Regrouper par</label>
+                        <select id="no-rate-timeline" class="form-control">
+                            <option value="day" data-heading="Date" selected="selected">Jour</option>
+                            <option value="week" data-heading="Semaine">Semaine</option>
+                            <option value="month" data-heading="Mois">Mois</option>
+                            <option value="quarter" data-heading="Trimestre">Trimestre</option>
+                            <option value="year" data-heading="Année">Année</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="report-chart">
+                    <canvas id="report-no-rate-chart" role="img"
+                        aria-label="Graphique linéaire de l'évolution du taux de « non ». Les mêmes données figurent dans le tableau ci-dessous."
+                        data-label="Taux de « non »"></canvas>
+                </div>
+                <details>
+                    <summary>Tableau de données du graphique</summary>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-condensed">
+                            <caption class="wb-inv">Évolution du taux de « non »</caption>
+                            <thead>
+                                <tr>
+                                    <th id="no-rate-period" scope="col">Date</th>
+                                    <th scope="col">Taux de « non »</th>
+                                </tr>
+                            </thead>
+                            <tbody id="report-no-rate"></tbody>
                         </table>
                     </div>
                 </details>

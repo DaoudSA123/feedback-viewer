@@ -47,6 +47,7 @@ class FeedbackReportServiceTest {
     assertThat(r.pageViews())
         .isEqualTo(r.daily().stream().mapToLong(FeedbackReportService.DailyStats::pageViews).sum());
     assertThat(r.yesRate()).isEqualTo((double) r.yes() / (r.yes() + r.no()));
+    assertThat(r.noRate()).isEqualTo((double) r.no() / (r.yes() + r.no()));
     assertThat(r.responseRate()).isEqualTo((double) (r.yes() + r.no()) / r.pageViews());
     assertThat(r.benchmarkYesRate()).isEqualTo(FeedbackReportService.BENCHMARK_YES_RATE);
   }

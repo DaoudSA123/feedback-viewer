@@ -3,6 +3,8 @@
   var numberFormat = new Intl.NumberFormat(locale);
   var percentFormat = new Intl.NumberFormat(locale, { style: "percent", maximumFractionDigits: 1 });
   var chart = null;
+  var noRateChart = null;
+  var reportDaily = [];
   var commentsTable = null;
   var pending = null;
 
@@ -109,6 +111,55 @@
     });
   }
 
+  function dayNoRate(day) {
+    var responses = day.yes + day.no;
+    return responses ? day.no / responses : null;
+  }
+
+  function drawNoRateChart(daily) {
+    var canvas = byId("report-no-rate-chart");
+    if (noRateChart) noRateChart.destroy();
+    noRateChart = new Chart(canvas.getContext("2d"), {
+      type: "line",
+      data: {
+        labels: daily.map(function (d) { return d.date; }),
+        datasets: [
+          {
+            label: canvas.dataset.label,
+            data: daily.map(dayNoRate),
+            borderColor: "#eb6834",
+            backgroundColor: "#eb6834",
+            tension: 0.2,
+            spanGaps: false,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 1,
+            ticks: { callback: function (value) { return percentFormat.format(value); } },
+          },
+        },
+        plugins: {
+          legend: { position: "bottom" },
+          tooltip: {
+            callbacks: {
+              label: function (item) {
+                var value = item.parsed.y;
+                return item.dataset.label + ": " + (value == null ? "–" : percentFormat.format(value));
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
   function render(report, form, query) {
     var status = byId("report-status");
     setText("report-scope", form.dataset.scopeLabel);
@@ -130,6 +181,7 @@
     setText("stat-no", formatNumber(report.no));
     setText("stat-commentCount", formatNumber(report.commentCount));
     setText("stat-yesRate", formatRate(report.yesRate));
+    setText("stat-noRate", formatRate(report.noRate));
     setText("stat-responseRate", formatRate(report.responseRate));
     setText("stat-benchmarkYesRate", formatRate(report.benchmarkYesRate));
 
@@ -137,11 +189,9 @@
       el.hidden = el.dataset.assessment !== report.assessment;
     });
 
-    fillTable("report-daily", report.daily, function (d) {
-      var responses = d.yes + d.no;
-      return [d.date, formatNumber(d.pageViews), formatNumber(d.yes), formatNumber(d.no),
-        formatRate(responses ? d.yes / responses : null)];
-    });
+    reportDaily = report.daily;
+    byId("clicks-timeline").value = "day";
+    byId("no-rate-timeline").value = "day";
     setText("comments-shown", formatNumber(report.comments.length));
     setText("comments-total", formatNumber(report.commentCount));
     byId("download-csv").href = "/reports/comments/exportCSV?" + query;
@@ -151,9 +201,69 @@
     byId("report-comments").hidden = false;
     byId("report-next").hidden = false;
     renderComments(report.comments);
-    drawChart(report.daily);
+    showClicks();
+    showNoRate();
     status.textContent = status.dataset.done;
     byId("report-heading").focus();
+  }
+
+  function periodKey(isoDate, bucket) {
+    if (bucket === "day") return isoDate;
+    var parts = isoDate.split("-");
+    var year = +parts[0];
+    var month = +parts[1];
+    if (bucket === "month") return isoDate.slice(0, 7);
+    if (bucket === "quarter") {
+      var quarter = Math.floor((month - 1) / 3) + 1;
+      var mark = locale === "fr-CA" ? "T" : "Q";
+      return year + "-" + mark + quarter;
+    }
+    if (bucket === "year") return String(year);
+    var date = new Date(Date.UTC(year, month - 1, +parts[2]));
+    var weekday = date.getUTCDay();
+    date.setUTCDate(date.getUTCDate() - (weekday === 0 ? 6 : weekday - 1));
+    return date.toISOString().slice(0, 10);
+  }
+
+  function groupDaily(bucket) {
+    var groups = [];
+    var index = {};
+    reportDaily.forEach(function (day) {
+      var key = periodKey(day.date, bucket);
+      var group = index[key];
+      if (!group) {
+        group = { date: key, pageViews: 0, yes: 0, no: 0 };
+        index[key] = group;
+        groups.push(group);
+      }
+      group.pageViews += day.pageViews;
+      group.yes += day.yes;
+      group.no += day.no;
+    });
+    return groups;
+  }
+
+  function showClicks() {
+    var select = byId("clicks-timeline");
+    var rows = groupDaily(select.value);
+    setText("clicks-period", select.options[select.selectedIndex].dataset.heading);
+    fillTable("report-daily", rows, function (row) {
+      var responses = row.yes + row.no;
+      return [row.date, formatNumber(row.pageViews), formatNumber(row.yes), formatNumber(row.no),
+        formatRate(responses ? row.yes / responses : null),
+        formatRate(responses ? row.no / responses : null)];
+    });
+    drawChart(rows);
+  }
+
+  function showNoRate() {
+    var select = byId("no-rate-timeline");
+    var rows = groupDaily(select.value);
+    setText("no-rate-period", select.options[select.selectedIndex].dataset.heading);
+    fillTable("report-no-rate", rows, function (row) {
+      return [row.date, formatRate(dayNoRate(row))];
+    });
+    drawNoRateChart(rows);
   }
 
   function generate(form) {
@@ -203,5 +313,10 @@
     navigator.clipboard.writeText(byId(button.dataset.target).value).then(function () {
       button.textContent = button.dataset.copied;
     });
+  });
+
+  document.addEventListener("change", function (event) {
+    if (event.target.id === "clicks-timeline") showClicks();
+    if (event.target.id === "no-rate-timeline") showNoRate();
   });
 })();

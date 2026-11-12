@@ -102,6 +102,7 @@ public class FeedbackReportService {
       long yes,
       long no,
       Double yesRate,
+      Double noRate,
       Double responseRate,
       double benchmarkYesRate,
       String assessment,
@@ -128,6 +129,7 @@ public class FeedbackReportService {
     long yes = daily.stream().mapToLong(DailyStats::yes).sum();
     long no = daily.stream().mapToLong(DailyStats::no).sum();
     Double yesRate = yes + no == 0 ? null : (double) yes / (yes + no);
+    Double noRate = yes + no == 0 ? null : (double) no / (yes + no);
     Double responseRate = pageViews == 0 ? null : (double) (yes + no) / pageViews;
 
     return new Report(
@@ -139,6 +141,7 @@ public class FeedbackReportService {
         yes,
         no,
         yesRate,
+        noRate,
         responseRate,
         BENCHMARK_YES_RATE,
         assess(yes + no, yesRate),

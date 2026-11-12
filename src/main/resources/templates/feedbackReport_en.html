@@ -13,8 +13,6 @@
     <th:block layout:fragment="content">
         <main class="container">
             <h1 id="wb-cont">GC Feedback</h1>
-            <p>See how people answered "Did you find what you were looking for?" on pages that have the GC
-                Feedback tool. Choose what to report on, pick a date range and generate the report.</p>
 
             <div class="wb-tabs">
                 <div class="tabpanels">
@@ -170,6 +168,10 @@
                         <dd id="stat-yesRate"></dd>
                     </div>
                     <div class="col-xs-6 col-md-3">
+                        <dt>"No" rate</dt>
+                        <dd id="stat-noRate"></dd>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
                         <dt>Response rate</dt>
                         <dd id="stat-responseRate"></dd>
                     </div>
@@ -179,27 +181,74 @@
                     </div>
                 </dl>
 
-                <h3>"Yes" and "no" clicks by day</h3>
+                <h3>"Yes" and "no" clicks</h3>
+                <div class="row">
+                    <div class="form-group col-xs-12 col-md-3">
+                        <label for="clicks-timeline">Group by</label>
+                        <select id="clicks-timeline" class="form-control">
+                            <option value="day" data-heading="Date" selected="selected">Day</option>
+                            <option value="week" data-heading="Week">Week</option>
+                            <option value="month" data-heading="Month">Month</option>
+                            <option value="quarter" data-heading="Quarter">Quarter</option>
+                            <option value="year" data-heading="Year">Year</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="report-chart">
                     <canvas id="report-chart" role="img"
-                        aria-label="Bar chart of yes and no clicks by day. The same data is in the table below."
+                        aria-label="Bar chart of yes and no clicks. The same data is in the table below."
                         data-label-yes="Yes" data-label-no="No"></canvas>
                 </div>
                 <details>
                     <summary>Data table for the chart</summary>
                     <div class="table-responsive">
                         <table class="table table-striped table-condensed">
-                            <caption class="wb-inv">"Yes" and "no" clicks by day</caption>
+                            <caption class="wb-inv">"Yes" and "no" clicks</caption>
                             <thead>
                                 <tr>
-                                    <th scope="col">Date</th>
+                                    <th id="clicks-period" scope="col">Date</th>
                                     <th scope="col">Page views</th>
                                     <th scope="col">"Yes" clicks</th>
                                     <th scope="col">"No" clicks</th>
                                     <th scope="col">"Yes" rate</th>
+                                    <th scope="col">"No" rate</th>
                                 </tr>
                             </thead>
                             <tbody id="report-daily"></tbody>
+                        </table>
+                    </div>
+                </details>
+
+                <h3>Evolution of the "no" rate</h3>
+                <div class="row">
+                    <div class="form-group col-xs-12 col-md-3">
+                        <label for="no-rate-timeline">Group by</label>
+                        <select id="no-rate-timeline" class="form-control">
+                            <option value="day" data-heading="Date" selected="selected">Day</option>
+                            <option value="week" data-heading="Week">Week</option>
+                            <option value="month" data-heading="Month">Month</option>
+                            <option value="quarter" data-heading="Quarter">Quarter</option>
+                            <option value="year" data-heading="Year">Year</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="report-chart">
+                    <canvas id="report-no-rate-chart" role="img"
+                        aria-label="Line chart of the &quot;no&quot; rate. The same data is in the table below."
+                        data-label="&quot;No&quot; rate"></canvas>
+                </div>
+                <details>
+                    <summary>Data table for the chart</summary>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-condensed">
+                            <caption class="wb-inv">Evolution of the "no" rate</caption>
+                            <thead>
+                                <tr>
+                                    <th id="no-rate-period" scope="col">Date</th>
+                                    <th scope="col">"No" rate</th>
+                                </tr>
+                            </thead>
+                            <tbody id="report-no-rate"></tbody>
                         </table>
                     </div>
                 </details>
