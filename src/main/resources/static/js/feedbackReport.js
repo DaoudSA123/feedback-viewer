@@ -208,26 +208,15 @@
     byId("report-heading").focus();
   }
 
+  // A quarter is about 13 weeks; a longer range reads better by month
   function initialBucket(daily) {
-    if (daily.length < 2) return "day";
-    var startYear = daily[0].date.slice(0, 4);
-    var endYear = daily[daily.length - 1].date.slice(0, 4);
-    return startYear === endYear ? "day" : "year";
+    return daily.length > 120 ? "month" : "week";
   }
 
   function periodKey(isoDate, bucket) {
-    if (bucket === "day") return isoDate;
-    var parts = isoDate.split("-");
-    var year = +parts[0];
-    var month = +parts[1];
     if (bucket === "month") return isoDate.slice(0, 7);
-    if (bucket === "quarter") {
-      var quarter = Math.floor((month - 1) / 3) + 1;
-      var mark = locale === "fr-CA" ? "T" : "Q";
-      return year + "-" + mark + quarter;
-    }
-    if (bucket === "year") return String(year);
-    var date = new Date(Date.UTC(year, month - 1, +parts[2]));
+    var parts = isoDate.split("-");
+    var date = new Date(Date.UTC(+parts[0], +parts[1] - 1, +parts[2]));
     var weekday = date.getUTCDay();
     date.setUTCDate(date.getUTCDate() - (weekday === 0 ? 6 : weekday - 1));
     return date.toISOString().slice(0, 10);

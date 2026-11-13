@@ -30,11 +30,13 @@ public class FeedbackReportController {
   public ModelAndView reportPage(HttpServletRequest request) {
     String lang = (String) request.getSession().getAttribute("lang");
     var today = LocalDate.now();
+    var quarter = FeedbackReportService.lastFiscalQuarter(today);
     var mav = new ModelAndView("feedbackReport_" + lang);
     mav.addObject("lang", lang);
     mav.addObject("departments", FeedbackReportService.DEPARTMENTS);
-    mav.addObject("defaultStartDate", today.minusYears(5));
-    mav.addObject("defaultEndDate", today.minusDays(1));
+    mav.addObject("defaultStartDate", quarter.start());
+    mav.addObject("defaultEndDate", quarter.end());
+    mav.addObject("minDate", quarter.start());
     mav.addObject("maxDate", today);
     return mav;
   }

@@ -39,8 +39,10 @@ class FeedbackReportControllerTest {
 
     assertThat(mav.getViewName()).isEqualTo("feedbackReport_fr");
     assertThat(mav.getModel().get("departments")).isEqualTo(FeedbackReportService.DEPARTMENTS);
-    assertThat(mav.getModel().get("defaultStartDate")).isEqualTo(LocalDate.now().minusYears(5));
-    assertThat(mav.getModel().get("defaultEndDate")).isEqualTo(LocalDate.now().minusDays(1));
+    var quarter = FeedbackReportService.lastFiscalQuarter(LocalDate.now());
+    assertThat(mav.getModel().get("defaultStartDate")).isEqualTo(quarter.start());
+    assertThat(mav.getModel().get("defaultEndDate")).isEqualTo(quarter.end());
+    assertThat(mav.getModel().get("minDate")).isEqualTo(quarter.start());
   }
 
   @Test

@@ -31,13 +31,13 @@
                                     <label for="page-start" class="required"><span class="field-name">Start date</span>
                                         <strong class="required">(required)</strong></label>
                                     <input type="date" id="page-start" name="startDate" class="form-control"
-                                        required="required" th:value="${defaultStartDate}" th:max="${maxDate}" />
+                                        required="required" th:value="${defaultStartDate}" th:min="${minDate}" th:max="${maxDate}" />
                                 </div>
                                 <div class="form-group">
                                     <label for="page-end" class="required"><span class="field-name">End date</span>
                                         <strong class="required">(required)</strong></label>
                                     <input type="date" id="page-end" name="endDate" class="form-control"
-                                        required="required" th:value="${defaultEndDate}" th:max="${maxDate}" />
+                                        required="required" th:value="${defaultEndDate}" th:min="${minDate}" th:max="${maxDate}" />
                                 </div>
                                 <button type="submit" class="btn btn-primary">View results</button>
                             </form>
@@ -60,13 +60,13 @@
                                     <label for="group-start" class="required"><span class="field-name">Start date</span>
                                         <strong class="required">(required)</strong></label>
                                     <input type="date" id="group-start" name="startDate" class="form-control"
-                                        required="required" th:value="${defaultStartDate}" th:max="${maxDate}" />
+                                        required="required" th:value="${defaultStartDate}" th:min="${minDate}" th:max="${maxDate}" />
                                 </div>
                                 <div class="form-group">
                                     <label for="group-end" class="required"><span class="field-name">End date</span>
                                         <strong class="required">(required)</strong></label>
                                     <input type="date" id="group-end" name="endDate" class="form-control"
-                                        required="required" th:value="${defaultEndDate}" th:max="${maxDate}" />
+                                        required="required" th:value="${defaultEndDate}" th:min="${minDate}" th:max="${maxDate}" />
                                 </div>
                                 <button type="submit" class="btn btn-primary">View results</button>
                             </form>
@@ -93,14 +93,14 @@
                                             date</span>
                                         <strong class="required">(required)</strong></label>
                                     <input type="date" id="department-start" name="startDate" class="form-control"
-                                        required="required" th:value="${defaultStartDate}" th:max="${maxDate}" />
+                                        required="required" th:value="${defaultStartDate}" th:min="${minDate}" th:max="${maxDate}" />
                                 </div>
                                 <div class="form-group">
                                     <label for="department-end" class="required"><span class="field-name">End
                                             date</span>
                                         <strong class="required">(required)</strong></label>
                                     <input type="date" id="department-end" name="endDate" class="form-control"
-                                        required="required" th:value="${defaultEndDate}" th:max="${maxDate}" />
+                                        required="required" th:value="${defaultEndDate}" th:min="${minDate}" th:max="${maxDate}" />
                                 </div>
                                 <button type="submit" class="btn btn-primary">View results</button>
                             </form>
@@ -117,13 +117,13 @@
                                     <label for="gc-start" class="required"><span class="field-name">Start date</span>
                                         <strong class="required">(required)</strong></label>
                                     <input type="date" id="gc-start" name="startDate" class="form-control"
-                                        required="required" th:value="${defaultStartDate}" th:max="${maxDate}" />
+                                        required="required" th:value="${defaultStartDate}" th:min="${minDate}" th:max="${maxDate}" />
                                 </div>
                                 <div class="form-group">
                                     <label for="gc-end" class="required"><span class="field-name">End date</span>
                                         <strong class="required">(required)</strong></label>
                                     <input type="date" id="gc-end" name="endDate" class="form-control"
-                                        required="required" th:value="${defaultEndDate}" th:max="${maxDate}" />
+                                        required="required" th:value="${defaultEndDate}" th:min="${minDate}" th:max="${maxDate}" />
                                 </div>
                                 <button type="submit" class="btn btn-primary">View results</button>
                             </form>
@@ -136,8 +136,8 @@
                 data-loading="Generating the report..." data-done="The report is ready."
                 data-period="From {start} to {end}"></p>
             <div id="report-error" class="alert alert-danger" role="alert" hidden="hidden">
-                <p>The report could not be generated. Check the URLs and that the start date is before the end
-                    date (at most 5 years apart), then try again.</p>
+                <p>The report could not be generated. Check the URLs and that the start date is on or after
+                    the first day of the last quarter, and before the end date, then try again.</p>
             </div>
 
             <section id="report-results" class="mrgn-tp-lg" hidden="hidden">
@@ -186,11 +186,8 @@
                     <div class="form-group col-xs-12 col-md-3">
                         <label for="clicks-timeline">Group by</label>
                         <select id="clicks-timeline" class="form-control">
-                            <option value="day" data-heading="Date" selected="selected">Day</option>
-                            <option value="week" data-heading="Week">Week</option>
+                            <option value="week" data-heading="Week" selected="selected">Week</option>
                             <option value="month" data-heading="Month">Month</option>
-                            <option value="quarter" data-heading="Quarter">Quarter</option>
-                            <option value="year" data-heading="Year">Year</option>
                         </select>
                     </div>
                 </div>
@@ -206,7 +203,7 @@
                             <caption class="wb-inv">"Yes" and "no" clicks</caption>
                             <thead>
                                 <tr>
-                                    <th id="clicks-period" scope="col">Date</th>
+                                    <th id="clicks-period" scope="col">Week</th>
                                     <th scope="col">Page views</th>
                                     <th scope="col">"Yes" clicks</th>
                                     <th scope="col">"No" clicks</th>
@@ -224,11 +221,8 @@
                     <div class="form-group col-xs-12 col-md-3">
                         <label for="no-rate-timeline">Group by</label>
                         <select id="no-rate-timeline" class="form-control">
-                            <option value="day" data-heading="Date" selected="selected">Day</option>
-                            <option value="week" data-heading="Week">Week</option>
+                            <option value="week" data-heading="Week" selected="selected">Week</option>
                             <option value="month" data-heading="Month">Month</option>
-                            <option value="quarter" data-heading="Quarter">Quarter</option>
-                            <option value="year" data-heading="Year">Year</option>
                         </select>
                     </div>
                 </div>
@@ -244,7 +238,7 @@
                             <caption class="wb-inv">Evolution of the "no" rate</caption>
                             <thead>
                                 <tr>
-                                    <th id="no-rate-period" scope="col">Date</th>
+                                    <th id="no-rate-period" scope="col">Week</th>
                                     <th scope="col">"No" rate</th>
                                 </tr>
                             </thead>

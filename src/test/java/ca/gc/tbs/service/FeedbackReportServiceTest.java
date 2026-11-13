@@ -3,11 +3,11 @@ package ca.gc.tbs.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import ca.gc.tbs.service.FeedbackReportService.FiscalQuarter;
 import ca.gc.tbs.service.FeedbackReportService.Report;
 import ca.gc.tbs.service.FeedbackReportService.ReportComment;
 import ca.gc.tbs.service.FeedbackReportService.Scope;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -20,6 +20,24 @@ class FeedbackReportServiceTest {
 
   private Report report(String scope, String value) {
     return service.generate(service.parseRequest(scope, value, "2026-10-01", "2026-10-31"));
+  }
+
+  @Test
+  void lastFiscalQuarterIsThePreviousCompletedOne() {
+    assertThat(FeedbackReportService.lastFiscalQuarter(LocalDate.of(2026, 11, 13)))
+        .isEqualTo(new FiscalQuarter(LocalDate.of(2026, 7, 1), LocalDate.of(2026, 9, 30)));
+    assertThat(FeedbackReportService.lastFiscalQuarter(LocalDate.of(2026, 4, 1)))
+        .isEqualTo(new FiscalQuarter(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 3, 31)));
+    assertThat(FeedbackReportService.lastFiscalQuarter(LocalDate.of(2026, 6, 30)))
+        .isEqualTo(new FiscalQuarter(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 3, 31)));
+    assertThat(FeedbackReportService.lastFiscalQuarter(LocalDate.of(2026, 7, 1)))
+        .isEqualTo(new FiscalQuarter(LocalDate.of(2026, 4, 1), LocalDate.of(2026, 6, 30)));
+    assertThat(FeedbackReportService.lastFiscalQuarter(LocalDate.of(2026, 10, 1)))
+        .isEqualTo(new FiscalQuarter(LocalDate.of(2026, 7, 1), LocalDate.of(2026, 9, 30)));
+    assertThat(FeedbackReportService.lastFiscalQuarter(LocalDate.of(2026, 1, 15)))
+        .isEqualTo(new FiscalQuarter(LocalDate.of(2025, 10, 1), LocalDate.of(2025, 12, 31)));
+    assertThat(FeedbackReportService.lastFiscalQuarter(LocalDate.of(2026, 3, 31)))
+        .isEqualTo(new FiscalQuarter(LocalDate.of(2025, 10, 1), LocalDate.of(2025, 12, 31)));
   }
 
   @Test
@@ -133,25 +151,16 @@ class FeedbackReportServiceTest {
   }
 
   @Test
-  void aFullYearIsAllowed() {
-    var request = service.parseRequest("GC", null, "2024-01-01", "2024-12-31");
+  void theEarliestStartIsTheLastQuarter() {
+    LocalDate earliest = FeedbackReportService.lastFiscalQuarter(LocalDate.now()).start();
 
-    assertThat(request.startDate()).isEqualTo(LocalDate.of(2024, 1, 1));
-    assertThat(service.generate(request).daily()).hasSize(366);
-  }
-
-  @Test
-  void mockDataCanSpanFiveYears() {
-    LocalDate start = LocalDate.of(2021, 1, 1);
-    LocalDate end = start.plusYears(FeedbackReportService.MAX_RANGE_YEARS);
-    var request = service.parseRequest("PAGE", PAGE_A, start.toString(), end.toString());
-    Report r = service.generate(request);
-
-    assertThat(r.daily()).hasSize((int) ChronoUnit.DAYS.between(start, end) + 1);
-    assertThat(r.daily().getFirst().date()).isEqualTo("2021-01-01");
-    assertThat(r.daily().getLast().date()).isEqualTo("2026-01-01");
-    assertThat(r.comments())
-        .extracting(ReportComment::date)
-        .allMatch(d -> d.compareTo("2021-01-01") >= 0 && d.compareTo("2026-01-01") <= 0);
+    assertThat(service.parseRequest("PAGE", PAGE_A, earliest.toString(), earliest.toString()).startDate())
+        .isEqualTo(earliest);
+    assertThatThrownBy(
+            () ->
+                service.parseRequest(
+                    "PAGE", PAGE_A, earliest.minusDays(1).toString(), earliest.toString()))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("startDate is before the last quarter");
   }
 }

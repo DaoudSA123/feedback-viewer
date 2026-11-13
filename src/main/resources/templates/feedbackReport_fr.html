@@ -32,13 +32,13 @@
                                             début</span>
                                         <strong class="required">(obligatoire)</strong></label>
                                     <input type="date" id="page-start" name="startDate" class="form-control"
-                                        required="required" th:value="${defaultStartDate}" th:max="${maxDate}" />
+                                        required="required" th:value="${defaultStartDate}" th:min="${minDate}" th:max="${maxDate}" />
                                 </div>
                                 <div class="form-group">
                                     <label for="page-end" class="required"><span class="field-name">Date de fin</span>
                                         <strong class="required">(obligatoire)</strong></label>
                                     <input type="date" id="page-end" name="endDate" class="form-control"
-                                        required="required" th:value="${defaultEndDate}" th:max="${maxDate}" />
+                                        required="required" th:value="${defaultEndDate}" th:min="${minDate}" th:max="${maxDate}" />
                                 </div>
                                 <button type="submit" class="btn btn-primary">Afficher les résultats</button>
                             </form>
@@ -62,14 +62,14 @@
                                             début</span>
                                         <strong class="required">(obligatoire)</strong></label>
                                     <input type="date" id="group-start" name="startDate" class="form-control"
-                                        required="required" th:value="${defaultStartDate}" th:max="${maxDate}" />
+                                        required="required" th:value="${defaultStartDate}" th:min="${minDate}" th:max="${maxDate}" />
                                 </div>
                                 <div class="form-group">
                                     <label for="group-end" class="required"><span class="field-name">Date de
                                             fin</span>
                                         <strong class="required">(obligatoire)</strong></label>
                                     <input type="date" id="group-end" name="endDate" class="form-control"
-                                        required="required" th:value="${defaultEndDate}" th:max="${maxDate}" />
+                                        required="required" th:value="${defaultEndDate}" th:min="${minDate}" th:max="${maxDate}" />
                                 </div>
                                 <button type="submit" class="btn btn-primary">Afficher les résultats</button>
                             </form>
@@ -96,14 +96,14 @@
                                             début</span>
                                         <strong class="required">(obligatoire)</strong></label>
                                     <input type="date" id="department-start" name="startDate" class="form-control"
-                                        required="required" th:value="${defaultStartDate}" th:max="${maxDate}" />
+                                        required="required" th:value="${defaultStartDate}" th:min="${minDate}" th:max="${maxDate}" />
                                 </div>
                                 <div class="form-group">
                                     <label for="department-end" class="required"><span class="field-name">Date de
                                             fin</span>
                                         <strong class="required">(obligatoire)</strong></label>
                                     <input type="date" id="department-end" name="endDate" class="form-control"
-                                        required="required" th:value="${defaultEndDate}" th:max="${maxDate}" />
+                                        required="required" th:value="${defaultEndDate}" th:min="${minDate}" th:max="${maxDate}" />
                                 </div>
                                 <button type="submit" class="btn btn-primary">Afficher les résultats</button>
                             </form>
@@ -121,13 +121,13 @@
                                             début</span>
                                         <strong class="required">(obligatoire)</strong></label>
                                     <input type="date" id="gc-start" name="startDate" class="form-control"
-                                        required="required" th:value="${defaultStartDate}" th:max="${maxDate}" />
+                                        required="required" th:value="${defaultStartDate}" th:min="${minDate}" th:max="${maxDate}" />
                                 </div>
                                 <div class="form-group">
                                     <label for="gc-end" class="required"><span class="field-name">Date de fin</span>
                                         <strong class="required">(obligatoire)</strong></label>
                                     <input type="date" id="gc-end" name="endDate" class="form-control"
-                                        required="required" th:value="${defaultEndDate}" th:max="${maxDate}" />
+                                        required="required" th:value="${defaultEndDate}" th:min="${minDate}" th:max="${maxDate}" />
                                 </div>
                                 <button type="submit" class="btn btn-primary">Afficher les résultats</button>
                             </form>
@@ -140,8 +140,8 @@
                 data-loading="Génération du rapport..." data-done="Le rapport est prêt."
                 data-period="Du {start} au {end}"></p>
             <div id="report-error" class="alert alert-danger" role="alert" hidden="hidden">
-                <p>Le rapport n'a pas pu être généré. Vérifiez les URL et que la date de début précède la date de
-                    fin (5 ans au plus), puis réessayez.</p>
+                <p>Le rapport n'a pas pu être généré. Vérifiez les URL et que la date de début est le premier
+                    jour du dernier trimestre ou après, et qu'elle précède la date de fin, puis réessayez.</p>
             </div>
 
             <section id="report-results" class="mrgn-tp-lg" hidden="hidden">
@@ -190,11 +190,8 @@
                     <div class="form-group col-xs-12 col-md-3">
                         <label for="clicks-timeline">Regrouper par</label>
                         <select id="clicks-timeline" class="form-control">
-                            <option value="day" data-heading="Date" selected="selected">Jour</option>
-                            <option value="week" data-heading="Semaine">Semaine</option>
+                            <option value="week" data-heading="Semaine" selected="selected">Semaine</option>
                             <option value="month" data-heading="Mois">Mois</option>
-                            <option value="quarter" data-heading="Trimestre">Trimestre</option>
-                            <option value="year" data-heading="Année">Année</option>
                         </select>
                     </div>
                 </div>
@@ -210,7 +207,7 @@
                             <caption class="wb-inv">Clics « oui » et « non »</caption>
                             <thead>
                                 <tr>
-                                    <th id="clicks-period" scope="col">Date</th>
+                                    <th id="clicks-period" scope="col">Semaine</th>
                                     <th scope="col">Pages vues</th>
                                     <th scope="col">Clics « oui »</th>
                                     <th scope="col">Clics « non »</th>
@@ -228,11 +225,8 @@
                     <div class="form-group col-xs-12 col-md-3">
                         <label for="no-rate-timeline">Regrouper par</label>
                         <select id="no-rate-timeline" class="form-control">
-                            <option value="day" data-heading="Date" selected="selected">Jour</option>
-                            <option value="week" data-heading="Semaine">Semaine</option>
+                            <option value="week" data-heading="Semaine" selected="selected">Semaine</option>
                             <option value="month" data-heading="Mois">Mois</option>
-                            <option value="quarter" data-heading="Trimestre">Trimestre</option>
-                            <option value="year" data-heading="Année">Année</option>
                         </select>
                     </div>
                 </div>
@@ -248,7 +242,7 @@
                             <caption class="wb-inv">Évolution du taux de « non »</caption>
                             <thead>
                                 <tr>
-                                    <th id="no-rate-period" scope="col">Date</th>
+                                    <th id="no-rate-period" scope="col">Semaine</th>
                                     <th scope="col">Taux de « non »</th>
                                 </tr>
                             </thead>

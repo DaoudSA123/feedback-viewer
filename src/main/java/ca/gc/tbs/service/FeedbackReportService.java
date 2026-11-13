@@ -1,6 +1,7 @@
 package ca.gc.tbs.service;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -89,6 +90,9 @@ public class FeedbackReportService {
   public record ReportRequest(
       Scope scope, List<String> targets, LocalDate startDate, LocalDate endDate) {}
 
+  /** Previous completed GC fiscal quarter. The fiscal year starts on April 1. */
+  public record FiscalQuarter(LocalDate start, LocalDate end) {}
+
   public record DailyStats(String date, long pageViews, long yes, long no) {}
 
   public record ReportComment(String date, String url, String language, String comment) {}
@@ -110,12 +114,24 @@ public class FeedbackReportService {
       List<DailyStats> daily,
       List<ReportComment> comments) {}
 
+  public static FiscalQuarter lastFiscalQuarter(LocalDate today) {
+    int fiscalYear =
+        today.getMonthValue() >= Month.APRIL.getValue() ? today.getYear() : today.getYear() - 1;
+    LocalDate fiscalStart = LocalDate.of(fiscalYear, Month.APRIL, 1);
+    int quarterIndex = (int) ChronoUnit.MONTHS.between(fiscalStart, today.withDayOfMonth(1)) / 3;
+    LocalDate start = fiscalStart.plusMonths((quarterIndex - 1L) * 3);
+    return new FiscalQuarter(start, start.plusMonths(3).minusDays(1));
+  }
+
   public ReportRequest parseRequest(String scope, String value, String startDate, String endDate) {
     Scope parsedScope = parseScope(scope);
     LocalDate start = parseDate(startDate, "startDate");
     LocalDate end = parseDate(endDate, "endDate");
     if (start.isAfter(end)) {
       throw new IllegalArgumentException("startDate is after endDate");
+    }
+    if (start.isBefore(lastFiscalQuarter(LocalDate.now()).start())) {
+      throw new IllegalArgumentException("startDate is before the last quarter");
     }
     if (start.plusYears(MAX_RANGE_YEARS).isBefore(end)) {
       throw new IllegalArgumentException("Date range is longer than " + MAX_RANGE_YEARS + " years");
